@@ -27,7 +27,7 @@ const Sidebar = ({setIsMenuHovered}) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <p className="mb-4">Menu</p>
+      <p className="mb-4 text-2xl">Menu</p>
       <div className="flex flex-col">
       {menuItems.map((menuItem, index) => (
         <Link key={index} to={menuItem.path} className="text-white text-sm hover:bg-gray-700 hover:border-gray-500 hover:border-2 hover:rounded-sm flex flex-col items-center py-2 px-3 cursor-pointer mb-4">
