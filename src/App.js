@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
   const [isMenuHovered, setIsMenuHovered] = useState(false);
+  
   useEffect(()=>{
     console.log(isMenuHovered)
   }, [isMenuHovered])
