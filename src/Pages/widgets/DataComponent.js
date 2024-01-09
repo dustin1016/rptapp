@@ -9,40 +9,46 @@ const DataComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks');
-        const reader = response.body.getReader();
-        let result = '';
+          const response = await fetch('http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks?x=1287');
+          const reader = response.body.getReader();
+          let result = '';
+          let parsedData = null;
+          while (true) {
+              const { done, value } = await reader.read();
+  
+              if (done) {
+                  // Fetching process is completed
+                  setLoading(false);
+                  break;
+              }
+  
+              const chunk = new TextDecoder('utf-8').decode(value);
+              result += chunk; // Accumulate chunks into a single string
+            
+              try {
+                const lastValidJSONIndex = result.lastIndexOf('}');
+                const previousLastValidJSONIndex = result.lastIndexOf('}', lastValidJSONIndex - 1);
 
-        while (true) {
-          const { done, value } = await reader.read();
+                if (previousLastValidJSONIndex !== -1) {
+                    const validJSONChunk = result.substring(previousLastValidJSONIndex + 1, lastValidJSONIndex + 1);
 
-          if (done) {
-            // Fetching process is completed
-            setLoading(false);
-            break;
-          }
+                    parsedData = JSON.parse(validJSONChunk);
+                    result = result.substring(0, previousLastValidJSONIndex + 1);
 
-          const chunk = new TextDecoder('utf-8').decode(value);
-
-          try {
-            const parsedData = JSON.parse(chunk);
-
-            if (parsedData.pct !== undefined) {
-              // Progress update received
-              setProgressPercentage(parsedData.pct.progress_percentage);
-            } else {
-              // Student data received
-              setStudentData((prevData) => [...prevData, parsedData.studentdata]);
+                    // Process parsedData as needed (progress updates or final data)
+                    const pct = ((parsedData.current/parsedData.total)*100).toFixed(2);
+                    setProgressPercentage(pct);
+                }
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
             }
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
           }
-        }
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
+          console.error('Error fetching data:', error);
+          setLoading(false);
       }
-    };
+  };
+  
 
     fetchData();
   }, []);
