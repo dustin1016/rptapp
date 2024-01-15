@@ -3,6 +3,7 @@ import ArTable from './widgets/ArTable';
 import DataComponent from './widgets/DataComponent';
 import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
+import { json } from 'react-router-dom';
 const AccountsReceivable = () => {
   const [hasData, setHasData] = useState(false);
   const [isFetching, setIsFetching]= useState(false);
@@ -74,22 +75,27 @@ const AccountsReceivable = () => {
                 }
     
                 const chunk = new TextDecoder('utf-8').decode(value);
-                result += chunk; // Accumulate chunks into a single string
-    
+                // result += chunk; // Accumulate chunks into a single string
+                const jsonString = (JSON.stringify(chunk)).replace(/(?:\\[rn])+/g, '');
+                const jsonData = JSON.parse(jsonString);
+                const finalJson = JSON.parse(jsonData);
+                console.log(finalJson);
                 try {
-                    const lastValidJSONIndex = result.lastIndexOf('}');
-                    const previousLastValidJSONIndex = result.lastIndexOf('}', lastValidJSONIndex - 1);
+
+                      // Process parsedData as needed (progress updates or final data)
+                      // const pct = jsonData.progress;
+                      // setProgressPercentage(pct);
+                    // const lastValidJSONIndex = result.lastIndexOf('}');
+                    // const previousLastValidJSONIndex = result.lastIndexOf('}', lastValidJSONIndex - 1);
     
-                    if (previousLastValidJSONIndex !== -1) {
-                        const validJSONChunk = result.substring(previousLastValidJSONIndex + 1, lastValidJSONIndex + 1);
+                    // if (previousLastValidJSONIndex !== -1) {
+                    //     const validJSONChunk = result.substring(previousLastValidJSONIndex + 1, lastValidJSONIndex + 1);
     
-                        parsedData = JSON.parse(validJSONChunk);
-                        result = result.substring(0, previousLastValidJSONIndex + 1);
+                    //     parsedData = JSON.parse(validJSONChunk);
+                    //     result = result.substring(0, previousLastValidJSONIndex + 1);
     
-                        // Process parsedData as needed (progress updates or final data)
-                        const pct = ((parsedData.current/parsedData.total)*100).toFixed(2);
-                        setProgressPercentage(pct);
-                    }
+                    
+                    // }
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
                 }
