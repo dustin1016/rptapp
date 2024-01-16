@@ -38,73 +38,100 @@ const AccountsReceivable = () => {
       }
 
       //fetch function
-      const fetchData = async () => {
-        setIsFetching(true);
-        try {
-            const url = 'http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks';
-            const params = { formattedDate: formattedDate }; // Parameters to be passed
+    //   const fetchData = async () => {
+    //     setIsFetching(true);
+    //     try {
+    //         const url = 'http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks';
+    //         const params = { formattedDate: formattedDate }; // Parameters to be passed
             
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(params) // Convert parameters to JSON string
-            });
+    //         const response = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(params) // Convert parameters to JSON string
+    //         });
     
-            const reader = response.body.getReader();
-            let result = '';
-            let parsedData = null;
+    //         const reader = response.body.getReader();
+    //         let result = '';
+    //         let parsedData = null;
     
-            while (true) {
-                const { done, value } = await reader.read();
+    //         while (true) {
+    //             const { done, value } = await reader.read();
     
-                if (done) {
-                    // Fetching process is completed
+    //             if (done) {
+    //                 // Fetching process is completed
                   
-                    setIsFetching(false)
-                    try {
-                      parsedData = JSON.parse(result);
-                      setStudentData(parsedData);
-                      console.log(studentData)
-                  } catch (error) {
-                      console.error('Error parsing JSON:', error);
-                  }
+    //                 setIsFetching(false)
+    //                 try {
+    //                   parsedData = JSON.parse(result);
+    //                   setStudentData(parsedData);
+    //                   console.log(studentData)
+    //               } catch (error) {
+    //                   console.error('Error parsing JSON:', error);
+    //               }
   
-                  break;
-                }
+    //               break;
+    //             }
     
-                const chunk = new TextDecoder('utf-8').decode(value);
-                // result += chunk; // Accumulate chunks into a single string
-                const jsonString = (JSON.stringify(chunk)).replace(/(?:\\[rn])+/g, '');
-                const jsonData = JSON.parse(jsonString);
-                const finalJson = JSON.parse(jsonData);
-                console.log(finalJson);
-                try {
+    //             const chunk = new TextDecoder('utf-8').decode(value);
+    //             // result += chunk; // Accumulate chunks into a single string
+    //             const jsonString = JSON.stringify(chunk);
+    //             const jsonData = JSON.parse(jsonString);
+    //             // const finalJson = JSON.parse(jsonData);
+    //             console.log(jsonData);
+    //             try {
 
-                      // Process parsedData as needed (progress updates or final data)
-                      // const pct = jsonData.progress;
-                      // setProgressPercentage(pct);
-                    // const lastValidJSONIndex = result.lastIndexOf('}');
-                    // const previousLastValidJSONIndex = result.lastIndexOf('}', lastValidJSONIndex - 1);
+    //                   // Process parsedData as needed (progress updates or final data)
+    //                   // const pct = jsonData.progress;
+    //                   // setProgressPercentage(pct);
+    //                 // const lastValidJSONIndex = result.lastIndexOf('}');
+    //                 // const previousLastValidJSONIndex = result.lastIndexOf('}', lastValidJSONIndex - 1);
     
-                    // if (previousLastValidJSONIndex !== -1) {
-                    //     const validJSONChunk = result.substring(previousLastValidJSONIndex + 1, lastValidJSONIndex + 1);
+    //                 // if (previousLastValidJSONIndex !== -1) {
+    //                 //     const validJSONChunk = result.substring(previousLastValidJSONIndex + 1, lastValidJSONIndex + 1);
     
-                    //     parsedData = JSON.parse(validJSONChunk);
-                    //     result = result.substring(0, previousLastValidJSONIndex + 1);
+    //                 //     parsedData = JSON.parse(validJSONChunk);
+    //                 //     result = result.substring(0, previousLastValidJSONIndex + 1);
     
                     
-                    // }
-                } catch (error) {
-                    console.error('Error parsing JSON:', error);
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setIsFetching(false);
-        }
-    };
+    //                 // }
+    //             } catch (error) {
+    //                 console.error('Error parsing JSON:', error);
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //         setIsFetching(false);
+    //     }
+    // };
+
+//  `http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks?formattedDate=${formattedDate}`
+      const fetchData = async () => {
+        const eventSource = new EventSource(`http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunk?formattedDate=${formattedDate}`);
+
+        eventSource.onmessage = (event) => {
+          // const strChunk = JSON.stringify(event.data);
+          const newChunk = JSON.parse(event.data);
+    
+          console.log(newChunk);
+          // Update the state to include the new chunk of data
+          // setStudentData((prevData) => [...prevData, ...newChunk]);
+        };
+    
+        eventSource.onerror = (error) => {
+          console.error('EventSource failed:', error);
+      
+          eventSource.close(); // Close the connection in case of an error
+        };
+    
+        // Cleanup when the component unmounts
+        return () => {
+          eventSource.close();
+        };
+      };
+  
+
     
 
   return (
