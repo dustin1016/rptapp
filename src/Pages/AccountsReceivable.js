@@ -108,16 +108,20 @@ const AccountsReceivable = () => {
 
 //  `http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks?formattedDate=${formattedDate}`
       const fetchData = async () => {
-        const eventSource = new EventSource(`http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunk?formattedDate=${formattedDate}`);
+        const eventSource = new EventSource(`http://10.125.0.222:8080/rptapi/index.php/accountsReceivable?formattedDate=${formattedDate}`);
 
         eventSource.onmessage = (event) => {
           // const strChunk = JSON.stringify(event.data);
           const newChunk = JSON.parse(event.data);
-    
+          const record = newChunk.data;
+
+          setProgressPercentage(record.progress);
+
+          console.log(record);
           // console.log(newChunk);
           // Update the state to include the new chunk of data
-          // setStudentData((prevData) => [...prevData, ...newChunk]);
-          console.log(newChunk.data);
+          // setStudentData((prevData) => [...prevData, ...accountsData]);
+          // console.log(studentData);
         };
     
         eventSource.onerror = (error) => {
