@@ -114,9 +114,10 @@ const AccountsReceivable = () => {
           // const strChunk = JSON.stringify(event.data);
           const newChunk = JSON.parse(event.data);
     
-          console.log(newChunk);
+          // console.log(newChunk);
           // Update the state to include the new chunk of data
           // setStudentData((prevData) => [...prevData, ...newChunk]);
+          console.log(newChunk.data);
         };
     
         eventSource.onerror = (error) => {
