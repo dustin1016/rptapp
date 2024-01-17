@@ -23,6 +23,9 @@ const AccountsReceivable = () => {
         }
       }, [isFetching]);
 
+      // useEffect(() => {
+      //   console.log(studentData);
+      // }, [studentData]);
       //css of progress bar
       const progressCss = {
         width: `${progressPercentage}%`,
@@ -106,8 +109,9 @@ const AccountsReceivable = () => {
     //     }
     // };
 
-//  `http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks?formattedDate=${formattedDate}`
+
       const fetchData = async () => {
+        setIsFetching(true);
         const eventSource = new EventSource(`http://10.125.0.222:8080/rptapi/index.php/accountsReceivable?formattedDate=${formattedDate}`);
 
         eventSource.onmessage = (event) => {
@@ -116,23 +120,37 @@ const AccountsReceivable = () => {
           const record = newChunk.data;
 
           setProgressPercentage(record.progress);
+          const accounts = record.accounts.map((item)=>({
+            acctDate: item.regdate,
+            balance: item.balance
+          }));
+          const studentRecord = {
+            studentno: record.student_number,
+            name: record.name,
+            collegeid: parseInt(record.collegeid),
+            accounts:accounts
+          };
 
-          console.log(record);
+        
+          // const accounts = record.accounts;
+          console.log(studentRecord);
+          
           // console.log(newChunk);
           // Update the state to include the new chunk of data
-          // setStudentData((prevData) => [...prevData, ...accountsData]);
-          // console.log(studentData);
+          setStudentData((prevData) => [...prevData, studentRecord]);
+     
         };
     
         eventSource.onerror = (error) => {
           console.error('EventSource failed:', error);
-      
+          setIsFetching(false);
           eventSource.close(); // Close the connection in case of an error
         };
     
         // Cleanup when the component unmounts
         return () => {
           eventSource.close();
+          setIsFetching(false);
         };
       };
   
