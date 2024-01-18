@@ -4,8 +4,9 @@ import DataComponent from './widgets/DataComponent';
 import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
 import { json } from 'react-router-dom';
+import LoadingIcons from 'react-loading-icons'
 const AccountsReceivable = () => {
-  const [hasData, setHasData] = useState(true);
+  const [hasData, setHasData] = useState(false);
   const [isFetching, setIsFetching]= useState(false);
   const [studentData, setStudentData] = useState([]);
   const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -41,78 +42,14 @@ const AccountsReceivable = () => {
         transition: 'opacity 1.5s ease-in-out', // Apply transition on opacity property // Use the variable within the style object
       }
 
-      //fetch function
-    //   const fetchData = async () => {
-    //     setIsFetching(true);
-    //     try {
-    //         const url = 'http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks';
-    //         const params = { formattedDate: formattedDate }; // Parameters to be passed
-            
-    //         const response = await fetch(url, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(params) // Convert parameters to JSON string
-    //         });
-    
-    //         const reader = response.body.getReader();
-    //         let result = '';
-    //         let parsedData = null;
-    
-    //         while (true) {
-    //             const { done, value } = await reader.read();
-    
-    //             if (done) {
-    //                 // Fetching process is completed
-                  
-    //                 setIsFetching(false)
-    //                 try {
-    //                   parsedData = JSON.parse(result);
-    //                   setStudentData(parsedData);
-    //                   console.log(studentData)
-    //               } catch (error) {
-    //                   console.error('Error parsing JSON:', error);
-    //               }
-  
-    //               break;
-    //             }
-    
-    //             const chunk = new TextDecoder('utf-8').decode(value);
-    //             // result += chunk; // Accumulate chunks into a single string
-    //             const jsonString = JSON.stringify(chunk);
-    //             const jsonData = JSON.parse(jsonString);
-    //             // const finalJson = JSON.parse(jsonData);
-    //             console.log(jsonData);
-    //             try {
-
-    //                   // Process parsedData as needed (progress updates or final data)
-    //                   // const pct = jsonData.progress;
-    //                   // setProgressPercentage(pct);
-    //                 // const lastValidJSONIndex = result.lastIndexOf('}');
-    //                 // const previousLastValidJSONIndex = result.lastIndexOf('}', lastValidJSONIndex - 1);
-    
-    //                 // if (previousLastValidJSONIndex !== -1) {
-    //                 //     const validJSONChunk = result.substring(previousLastValidJSONIndex + 1, lastValidJSONIndex + 1);
-    
-    //                 //     parsedData = JSON.parse(validJSONChunk);
-    //                 //     result = result.substring(0, previousLastValidJSONIndex + 1);
-    
-                    
-    //                 // }
-    //             } catch (error) {
-    //                 console.error('Error parsing JSON:', error);
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //         setIsFetching(false);
-    //     }
-    // };
+   
 
 
       const fetchData = async () => {
+        setHasData(false);
+        setStudentData([]);
         setIsFetching(true);
+        console.time();
         const eventSource = new EventSource(`http://10.125.0.222:8080/rptapi/index.php/accountsReceivable?formattedDate=${formattedDate}`);
 
         eventSource.onmessage = (event) => {
@@ -144,9 +81,12 @@ const AccountsReceivable = () => {
         };
     
         eventSource.onerror = (error) => {
-          console.error('EventSource failed:', error);
+          
+          console.log('Fetching has finished');
+          console.timeEnd();
           setIsFetching(false);
           eventSource.close(); // Close the connection in case of an error
+          setHasData(true);
         };
     
         // Cleanup when the component unmounts
@@ -163,7 +103,7 @@ const AccountsReceivable = () => {
    
     <div className='w-[90vw] h-screen'>
       <div className='flex flex-row w-full'>
-          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500'>
+          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 bg-red-600'>
             <h1 className='text-2xl mb-4'>Accounts Receivable</h1>
             <Datepicker setFormattedDate={setFormattedDate} />
             <button className={`bg-transparent
@@ -185,10 +125,20 @@ const AccountsReceivable = () => {
               <p className='text-center text-sm'>Retrieving records of {studProgress}</p>
             </div>
             )}
+
+<div className='w-64'>
+          <LoadingIcons.Puff   />  
+        </div>
           </div>
         <div className='flex-grow h-screen p-2 overflow-y-scroll'>
         {/* <DataComponent /> */}
-          {hasData && <ArTable formattedDate={formattedDate} />}
+          {hasData ? <ArTable formattedDate={formattedDate} studentData={studentData}  />
+        :
+        <div className='w-64'>
+          <LoadingIcons.Bars />  
+        </div>
+        }
+        
         </div>
       </div>
     </div>

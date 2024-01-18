@@ -3,41 +3,17 @@ import React, {useRef, useEffect} from 'react';
 import testData from '../../data/test';
 import colleges from '../../data/college';
 
-const mergeData = () => {
-  // Merge testData and colleges based on collegeid
-  return testData.map(student => ({
-    ...student,
-    collegeName: colleges.find(college => college.collegeid === student.collegeid)?.collegeName || 'Unknown College',
-  }));
-};
-const groupByCollegeId = () => {
-  // Group data by collegeid and arrange students alphabetically by name
-  return mergeData().reduce((acc, student) => {
-    const collegeId = student.collegeid;
-    acc[collegeId] = acc[collegeId] || { students: [], totalBalance: 0 };
-    acc[collegeId].students.push(student);
-    acc[collegeId].students.sort((a, b) => a.name.localeCompare(b.name)); // Sort students alphabetically by name
-    acc[collegeId].totalBalance += calculateTotalBalance(student.registrations);
-    return acc;
-  }, {});
-};
-
-const calculateTotalBalance = (registrations) => {
-  // Calculate total balance
-  return registrations.reduce((total, reg) => total + reg.balance, 0);
-};
-
-const formatCurrency = (amount) => {
- // Format the amount as a number with two decimal places
- const formattedAmount = amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  
- // Ensure there are always two decimal places
- return formattedAmount.includes('.') ? formattedAmount : `${formattedAmount}.00`;
-};
+import { 
+  renderAmountDueAging,
+  renderTotalAging,
+  calculateAgingBalances,
+  calculateAgingBalancesForTotal,
+  formatCurrency
+ } from './tableHelpers'; 
 
 
 
-const ArTable = ({formattedDate}) =>{
+const ArTable = ({formattedDate, studentData}) =>{
   useEffect(() => {
     // Adjust header widths after the component is mounted
     adjustHeaderWidths();
@@ -49,6 +25,37 @@ const ArTable = ({formattedDate}) =>{
       // window.removeEventListener('resize', adjustHeaderWidths);
     };
   }, []);
+
+
+
+  const mergeData = () => {
+    // Merge testData and colleges based on collegeid
+    return studentData.map(student => ({
+      ...student,
+      collegeName: colleges.find(college => college.collegeid === student.collegeid)?.collegeName || 'Unknown College',
+    }));
+  };
+  const groupByCollegeId = () => {
+    // Group data by collegeid and arrange students alphabetically by name
+    return mergeData().reduce((acc, student) => {
+      const collegeId = student.collegeid;
+      acc[collegeId] = acc[collegeId] || { students: [], totalBalance: 0 };
+      acc[collegeId].students.push(student);
+      acc[collegeId].students.sort((a, b) => a.name.localeCompare(b.name)); // Sort students alphabetically by name
+      acc[collegeId].totalBalance += calculateTotalBalance(student.accounts);
+      return acc;
+    }, {});
+  };
+  
+  const calculateTotalBalance = (accounts) => {
+    // Calculate total balance
+    const totalBalance = accounts.reduce((total, reg) => total + reg.balance, 0);
+
+    // return totalBalance !== 0 ? totalBalance : 0;
+    return totalBalance;
+  };
+  
+
 
   
 const adjustHeaderWidths = () => {
@@ -88,7 +95,8 @@ header.style.width = `${maxWidth}px`;
         return (
           <div>
             {Object.entries(groupedData).map(([collegeId, { students, totalBalance }]) => (
-              <React.Fragment key={collegeId}>
+              totalBalance !== 0 && (
+                <React.Fragment key={collegeId}>
                 <h2 className="text-2xl font-bold mb-2">{groupedData[collegeId].students[0].collegeName}</h2>
                 <table className="bg-white border-collapse border border-slate-400 table-auto mb-6 text-sm">
                   <thead>
@@ -99,11 +107,11 @@ header.style.width = `${maxWidth}px`;
                       <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Amount Balance</th>
                       <th className="py-2 px-4 border border-slate-300" colSpan={5}>Amount Due</th>
                     </tr>
-                    <tr>
+                    <tr className="bg-gray-100">
                       <th className="py-2 px-4 border border-slate-300" colSpan={2}>Current</th>
                       <th className="py-2 px-4 border border-slate-300" colSpan={3}>Past Due</th>
                     </tr>
-                    <tr>
+                    <tr className="bg-gray-100">
                       <th className="py-2 px-4 border border-slate-300">less than 90 Days</th>
                       <th className="py-2 px-4 border border-slate-300">91-365 days</th>
                       <th className="py-2 px-4 border border-slate-300">Over 1 year</th>
@@ -113,14 +121,15 @@ header.style.width = `${maxWidth}px`;
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student, index) => (
+                    {students
+                    .filter(student => calculateTotalBalance(student.accounts) !== 0)
+                    .map((student, index) => (
                       <tr key={student.studentno}>
                         <td className="py-2 px-4 border border-slate-300">{index+1}.</td>
                         <td className="py-2 px-4 border border-slate-300">{student.name}</td>
                         <td className="py-2 px-4 border border-slate-300">{student.studentno}</td>
-                        <td className="py-2 px-4 border border-slate-300 text-end">{formatCurrency(calculateTotalBalance(student.registrations))}</td>
-                        <td className="py-2 px-4 border border-slate-300 text-end">2.1</td>
-                        <td className="py-2 px-4 border border-slate-300 text-end">2.2</td>
+                        <td className="py-2 px-4 border border-slate-300 text-end">{formatCurrency(calculateTotalBalance(student.accounts))}</td>
+                        {renderAmountDueAging(student.accounts)}
                         {/* Add Amount Due logic here */}
                       </tr>
                     ))}
@@ -129,11 +138,13 @@ header.style.width = `${maxWidth}px`;
                         Sub-Total:
                       </th>
                       <td className="py-2 px-4 text-end">{formatCurrency(totalBalance)}</td>
-                      <td className="py-2 px-4">{/* Add total due logic here */}</td>
+                      {renderTotalAging(students)}
                     </tr>
                   </tbody>
                 </table>
               </React.Fragment>
+              )
+             
             ))}
           </div>
         );
