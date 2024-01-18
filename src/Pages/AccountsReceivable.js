@@ -5,12 +5,13 @@ import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
 import { json } from 'react-router-dom';
 const AccountsReceivable = () => {
-  const [hasData, setHasData] = useState(false);
+  const [hasData, setHasData] = useState(true);
   const [isFetching, setIsFetching]= useState(false);
   const [studentData, setStudentData] = useState([]);
   const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [showDiv, setShowDiv] = useState(false);
+  const [studProgress, setStudProgress] = useState('');
     useEffect(() => {
         document.title = 'Accounts Receivable';
       }, []);
@@ -23,9 +24,9 @@ const AccountsReceivable = () => {
         }
       }, [isFetching]);
 
-      // useEffect(() => {
-      //   console.log(studentData);
-      // }, [studentData]);
+      useEffect(() => {
+        console.log(studentData);
+      }, [studentData]);
       //css of progress bar
       const progressCss = {
         width: `${progressPercentage}%`,
@@ -120,6 +121,7 @@ const AccountsReceivable = () => {
           const record = newChunk.data;
 
           setProgressPercentage(record.progress);
+          setStudProgress(record.name);
           const accounts = record.accounts.map((item)=>({
             acctDate: item.regdate,
             balance: item.balance
@@ -133,7 +135,7 @@ const AccountsReceivable = () => {
 
         
           // const accounts = record.accounts;
-          console.log(studentRecord);
+         
           
           // console.log(newChunk);
           // Update the state to include the new chunk of data
@@ -160,32 +162,33 @@ const AccountsReceivable = () => {
   return (
    
     <div className='w-[90vw] h-screen'>
-      <div className='flex flex-row w-96'>
-        <div className='flex-auto h-screen w-64 p-2 border-r-2 border-r-blue-500'>
-          <h1 className='text-2xl mb-4'>Accounts Receivable</h1>
-          <Datepicker setFormattedDate={setFormattedDate} />
-          <button className={`bg-transparent
-           hover:bg-blue-500 mt-4 w-3/4
-            text-blue-700 font-semibold
-             hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded
-             ${isFetching ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-             onClick={()=>fetchData()}
-             disabled={isFetching}
-             >
-            Generate
-          </button>
-          {showDiv && (
-            <div className='my-4 flex flex-col items-center justify-center' style={opacCss}>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 my-2 dark:bg-gray-700">
-              <div className="bg-blue-600 h-2.5 rounded-full dark:bg-blue-500" style={progressCss}></div>
+      <div className='flex flex-row w-full'>
+          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500'>
+            <h1 className='text-2xl mb-4'>Accounts Receivable</h1>
+            <Datepicker setFormattedDate={setFormattedDate} />
+            <button className={`bg-transparent
+            hover:bg-blue-500 mt-4 w-3/4
+              text-blue-700 font-semibold
+              hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded
+              ${isFetching ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              onClick={()=>fetchData()}
+              disabled={isFetching}
+              >
+              Generate
+            </button>
+            {showDiv && (
+              <div className='my-4 flex flex-col items-center justify-center' style={opacCss}>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 my-2 dark:bg-gray-700">
+                <div className="bg-blue-600 h-2.5 rounded-full dark:bg-blue-500" style={progressCss}></div>
+              </div>
+              <p className='text-center text-md mb-4'>Progress of Data Fetching: {progressPercentage}%</p>
+              <p className='text-center text-sm'>Retrieving records of {studProgress}</p>
             </div>
-            <p className='text-center text-lg'>Progress of Data Fetching: {progressPercentage}%</p>
+            )}
           </div>
-          )}
-        </div>
-        <div className='flex-1  p-2'>
+        <div className='flex-grow h-screen p-2 overflow-y-scroll'>
         {/* <DataComponent /> */}
-          {hasData && <ArTable />}
+          {hasData && <ArTable formattedDate={formattedDate} />}
         </div>
       </div>
     </div>

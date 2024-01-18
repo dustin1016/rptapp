@@ -1,4 +1,4 @@
-const testData = [
+[
     {
         "studentno": "167-40-6988",
         "name": "Oswell Mamwell",
@@ -670,5 +670,3 @@ const testData = [
         ]
     }
 ]
-
-export default testData

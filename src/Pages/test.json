@@ -1,0 +1,27 @@
+[
+    {
+        "studentno":"2002-3-1303",
+        "name":"Guillano , Gretchen Ghray Q ",
+        "collegeid":3,
+        "registrations":[
+            {"regid":"180854","termid":"284","regdate":"2016-11-11 09:37:45.000","balance":4353},
+            {"regid":"175541","termid":"274","regdate":"2016-06-17 13:53:00.000","balance":-6000}
+            ]
+    },
+    {
+        "studentno":"2014-5-2456",
+        "name":"John Doe",
+        "collegeid":2,
+        "registrations":[
+            {"regid":"234535","termid":"284","regdate":"2014-11-11 09:37:45.000","balance":56768},
+            {"regid":"780676","termid":"274","regdate":"2015-06-17 13:53:00.000","balance":-23456}
+            ]
+    }
+
+
+
+]
+
+
+
+

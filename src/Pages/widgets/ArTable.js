@@ -1,122 +1,153 @@
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 
 import testData from '../../data/test';
+import colleges from '../../data/college';
 
-const ArTable = () =>{
-    const originalBody = useRef('');
-       // Grouping the data by collegeid
-  const groupedByCollege = testData.reduce((acc, obj) => {
-    const key = obj.collegeid;
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(obj);
+const mergeData = () => {
+  // Merge testData and colleges based on collegeid
+  return testData.map(student => ({
+    ...student,
+    collegeName: colleges.find(college => college.collegeid === student.collegeid)?.collegeName || 'Unknown College',
+  }));
+};
+const groupByCollegeId = () => {
+  // Group data by collegeid and arrange students alphabetically by name
+  return mergeData().reduce((acc, student) => {
+    const collegeId = student.collegeid;
+    acc[collegeId] = acc[collegeId] || { students: [], totalBalance: 0 };
+    acc[collegeId].students.push(student);
+    acc[collegeId].students.sort((a, b) => a.name.localeCompare(b.name)); // Sort students alphabetically by name
+    acc[collegeId].totalBalance += calculateTotalBalance(student.registrations);
     return acc;
   }, {});
+};
 
-  const handlePrint = () => {
-    const printContents = document.getElementById('printableArea').innerHTML;
-    
-    originalBody.current = document.body.innerHTML; // Save original body content
+const calculateTotalBalance = (registrations) => {
+  // Calculate total balance
+  return registrations.reduce((total, reg) => total + reg.balance, 0);
+};
 
-    document.body.innerHTML = printContents;
+const formatCurrency = (amount) => {
+ // Format the amount as a number with two decimal places
+ const formattedAmount = amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  
+ // Ensure there are always two decimal places
+ return formattedAmount.includes('.') ? formattedAmount : `${formattedAmount}.00`;
+};
 
-    window.print();
 
-    document.body.innerHTML = originalBody.current; // Restore original body content
-  };
 
-  return (
-    <div>
-          {/* Print button */}
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        onClick={handlePrint}
-      >
-        Print
-      </button>
+const ArTable = ({formattedDate}) =>{
+  useEffect(() => {
+    // Adjust header widths after the component is mounted
+    adjustHeaderWidths();
+    // You might want to listen for window resize events to readjust header widths
+    // window.addEventListener('resize', adjustHeaderWidths);
 
-      <div id="printableArea">
+    // Cleanup listener when the component is unmounted
+    return () => {
+      // window.removeEventListener('resize', adjustHeaderWidths);
+    };
+  }, []);
 
+  
+const adjustHeaderWidths = () => {
+const tables = document.querySelectorAll('.adjustable-table');
+
+tables.forEach(table => {
+const headers = table.querySelectorAll('thead th');
+
+headers.forEach(header => {
+const columnIndex = header.cellIndex;
+const maxWidth = Array.from(table.querySelectorAll(`tbody tr td:nth-child(${columnIndex + 1})`))
+  .map(td => td.clientWidth)
+  .reduce((max, width) => Math.max(max, width), 0);
+
+header.style.width = `${maxWidth}px`;
+});
+});
+};
+    const originalBody = useRef('');
+       
+       const handlePrint = () => {
+         const printContents = document.getElementById('printableArea').innerHTML;
+         
+         originalBody.current = document.body.innerHTML; // Save original body content
      
-      {Object.keys(groupedByCollege).map((collegeId) => (
-        <div key={collegeId}>
-          <h2 className="text-xl font-bold mt-4 mb-2">College ID: {collegeId}</h2>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  IDNO
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount Receivable
-                </th>
-                <th>tse</th>
-                <th>tse</th>
-                <th>tse</th>
-                <th>tse</th>
-                <th>tse</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {groupedByCollege[collegeId].map((student, index) => (
-                <tr key={index}>
-                  <td className="p-2 whitespace-nowrap">{student.idno}</td>
-                  <td className="p-2 whitespace-nowrap">{student.name}</td>
-                  <td className="p-2 whitespace-nowrap text-right">{student.amountReceivable}</td>
-                  <td className="p-2 whitespace-nowrap text-right">test</td>
-                  <td className="p-2 whitespace-nowrap text-right">test</td>
-                  <td className="p-2 whitespace-nowrap text-right">test</td>
-                  <td className="p-2 whitespace-nowrap text-right">test</td>
-                  <td className="p-2 whitespace-nowrap text-right">test</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="mt-2 text-right">
-            Subtotal: {groupedByCollege[collegeId].reduce((acc, student) => acc + student.amountReceivable, 0)}
-          </div>
-        </div>
-      ))}
-
-
-
-        {/* Final table */}
-        <div>
-        <h2 className="text-xl font-bold mt-4 mb-2">Total Amount Receivable per College</h2>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                College ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total Amount Receivable
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {Object.keys(groupedByCollege).map((collegeId) => (
-              <tr key={collegeId}>
-                <td className="px-6 py-4 whitespace-nowrap">{collegeId}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {
-                    // Calculate total amount receivable for each college
-                    groupedByCollege[collegeId].reduce((acc, student) => acc + student.amountReceivable, 0)
-                  }
-                </td>
-              </tr>
+         document.body.innerHTML = printContents;
+     
+         window.print();
+     
+         document.body.innerHTML = originalBody.current; // Restore original body content
+       };
+  
+       const renderTable = () => {
+       
+        const groupedData = groupByCollegeId();
+      
+        return (
+          <div>
+            {Object.entries(groupedData).map(([collegeId, { students, totalBalance }]) => (
+              <React.Fragment key={collegeId}>
+                <h2 className="text-2xl font-bold mb-2">{groupedData[collegeId].students[0].collegeName}</h2>
+                <table className="bg-white border-collapse border border-slate-400 table-auto mb-6 text-sm">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>No.</th>
+                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Name of Debtor</th>
+                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Student Number</th>
+                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Amount Balance</th>
+                      <th className="py-2 px-4 border border-slate-300" colSpan={5}>Amount Due</th>
+                    </tr>
+                    <tr>
+                      <th className="py-2 px-4 border border-slate-300" colSpan={2}>Current</th>
+                      <th className="py-2 px-4 border border-slate-300" colSpan={3}>Past Due</th>
+                    </tr>
+                    <tr>
+                      <th className="py-2 px-4 border border-slate-300">less than 90 Days</th>
+                      <th className="py-2 px-4 border border-slate-300">91-365 days</th>
+                      <th className="py-2 px-4 border border-slate-300">Over 1 year</th>
+                      <th className="py-2 px-4 border border-slate-300">Over 2 years</th>
+                      <th className="py-2 px-4 border border-slate-300">Over 3 years and onwards</th>
+                    
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.map((student, index) => (
+                      <tr key={student.studentno}>
+                        <td className="py-2 px-4 border border-slate-300">{index+1}.</td>
+                        <td className="py-2 px-4 border border-slate-300">{student.name}</td>
+                        <td className="py-2 px-4 border border-slate-300">{student.studentno}</td>
+                        <td className="py-2 px-4 border border-slate-300 text-end">{formatCurrency(calculateTotalBalance(student.registrations))}</td>
+                        <td className="py-2 px-4 border border-slate-300 text-end">2.1</td>
+                        <td className="py-2 px-4 border border-slate-300 text-end">2.2</td>
+                        {/* Add Amount Due logic here */}
+                      </tr>
+                    ))}
+                    <tr className='border-y-2 border-black'>
+                      <th colSpan="3" className=" py-2 px-4 text-end">
+                        Sub-Total:
+                      </th>
+                      <td className="py-2 px-4 text-end">{formatCurrency(totalBalance)}</td>
+                      <td className="py-2 px-4">{/* Add total due logic here */}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </React.Fragment>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </div>
+        );
+      };
 
-      </div>        
-    </div>
-  );
+      return (
+        <div className="p-4" id="printableArea">
+          <h1 className="text-lg text-center font-bold mb-2">SCHEDULE OF ACCOUNTS RECEIVABLE</h1>
+          <p className='text-md text-center font-semibold mb-4'>As at <u>{formattedDate}</u></p>
+          <p className='text-md'>Entity Name: PALAWAN STATE UNIVERSITY</p>
+          <p className='text-md mb-4'>Fund Cluster: 164</p>
+          {renderTable()}
+        </div>
+      );
 }
 
 
