@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-
+import { IoMdPrint } from "react-icons/io";
 import testData from '../../data/test';
 import colleges from '../../data/college';
 
@@ -8,23 +8,14 @@ import {
   renderTotalAging,
   calculateAgingBalances,
   calculateAgingBalancesForTotal,
-  formatCurrency
+  formatCurrency,
+  calculateTotalBalance,
+  calculateTotalBalanceAndAgingByCollege
  } from './tableHelpers'; 
 
 
 
 const ArTable = ({formattedDate, studentData}) =>{
-  useEffect(() => {
-    // Adjust header widths after the component is mounted
-    adjustHeaderWidths();
-    // You might want to listen for window resize events to readjust header widths
-    // window.addEventListener('resize', adjustHeaderWidths);
-
-    // Cleanup listener when the component is unmounted
-    return () => {
-      // window.removeEventListener('resize', adjustHeaderWidths);
-    };
-  }, []);
 
 
 
@@ -46,34 +37,90 @@ const ArTable = ({formattedDate, studentData}) =>{
       return acc;
     }, {});
   };
-  
-  const calculateTotalBalance = (accounts) => {
-    // Calculate total balance
-    const totalBalance = accounts.reduce((total, reg) => total + reg.balance, 0);
 
-    // return totalBalance !== 0 ? totalBalance : 0;
-    return totalBalance;
+  
+  const renderSummaryTable = () => {
+   
+    const groupedData = groupByCollegeId();
+    const agingCategories = ['over90', '91to365', 'over1Year', 'over2Years', 'over3YearsOnwards'];
+    const totalBalancesAndAgingByCollege = calculateTotalBalanceAndAgingByCollege(
+      Object.values(groupedData).flatMap(college => college.students)
+    );
+
+      // Calculate grand totals
+  const grandTotals = {
+    totalBalance: 0,
+    agingByCategory: {
+      over90: 0,
+      '91to365': 0,
+      over1Year: 0,
+      over2Years: 0,
+      over3YearsOnwards: 0,
+    },
   };
+
+  Object.values(totalBalancesAndAgingByCollege).forEach(({ totalBalance, agingByCategory }) => {
+    grandTotals.totalBalance += totalBalance;
+    agingCategories.forEach(category => {
+      grandTotals.agingByCategory[category] += agingByCategory[category];
+    });
+  });
+  
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-2">Accounts Receivable Summary</h2>
+        <table className="table-auto bg-white border border-slate-400 text-sm">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="py-2 px-4 border border-black/35" rowSpan={3}>College Name</th>
+              <th className="py-2 px-4 border border-black/35" rowSpan={3}>Amount Balance</th>
+              <th className="py-2 px-4 border border-black/35" colSpan={5}>Amount Due</th>
+              </tr>
+              <tr className="bg-gray-100">
+                      <th className="py-2 px-4 border border-black/35" colSpan={2}>Current</th>
+                      <th className="py-2 px-4 border border-black/35" colSpan={3}>Past Due</th>
+              </tr>
+              <tr className="bg-gray-100">
+                      <th className="py-2 px-4 border border-black/35">less than 90 Days</th>
+                      <th className="py-2 px-4 border border-black/35">91-365 days</th>
+                      <th className="py-2 px-4 border border-black/35">Over 1 year</th>
+                      <th className="py-2 px-4 border border-black/35">Over 2 years</th>
+                      <th className="py-2 px-4 border border-black/35">Over 3 years and onwards</th>
+                    
+                    </tr>
+          </thead>
+          <tbody>
+            {Object.entries(totalBalancesAndAgingByCollege).map(([collegeId, { totalBalance, agingByCategory }]) => (
+              <tr key={collegeId}>
+                <td className="py-2 px-4 border border-black/35">{colleges.find(college => college.collegeid === parseInt(collegeId))?.collegeName || 'Unknown College'}</td>
+                <td className="py-2 px-4 border border-black/35 text-end">{formatCurrency(totalBalance)}</td>
+                {agingCategories.map((category, index) => (
+                  <td key={index} className="py-2 px-4 text-end border border-black/35">
+                    {formatCurrency(agingByCategory[category])}
+                  </td>
+                ))}
+              </tr>
+            ))}
+            <tr className="text-end">
+            <td className="py-2 px-4 font-semibold border border-black/35">Grand Total</td>
+            <td className="py-2 px-4 font-semibold border border-black/35">{formatCurrency(grandTotals.totalBalance)}</td>
+            {agingCategories.map((category, index) => (
+              <td key={index} className="py-2 px-4 font-semibold border border-black/35">
+                {formatCurrency(grandTotals.agingByCategory[category])}
+              </td>
+            ))}
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   
 
 
   
-const adjustHeaderWidths = () => {
-const tables = document.querySelectorAll('.adjustable-table');
 
-tables.forEach(table => {
-const headers = table.querySelectorAll('thead th');
-
-headers.forEach(header => {
-const columnIndex = header.cellIndex;
-const maxWidth = Array.from(table.querySelectorAll(`tbody tr td:nth-child(${columnIndex + 1})`))
-  .map(td => td.clientWidth)
-  .reduce((max, width) => Math.max(max, width), 0);
-
-header.style.width = `${maxWidth}px`;
-});
-});
-};
     const originalBody = useRef('');
        
        const handlePrint = () => {
@@ -101,22 +148,22 @@ header.style.width = `${maxWidth}px`;
                 <table className="bg-white border-collapse border border-slate-400 table-auto mb-6 text-sm">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>No.</th>
-                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Name of Debtor</th>
-                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Student Number</th>
-                      <th className="py-2 px-4 border border-slate-300" rowSpan={3}>Amount Balance</th>
-                      <th className="py-2 px-4 border border-slate-300" colSpan={5}>Amount Due</th>
+                      <th className="py-2 px-4 border border-black/35" rowSpan={3}>No.</th>
+                      <th className="py-2 px-4 border border-black/35" rowSpan={3}>Name of Debtor</th>
+                      <th className="py-2 px-4 border border-black/35" rowSpan={3}>Student Number</th>
+                      <th className="py-2 px-4 border border-black/35" rowSpan={3}>Amount Balance</th>
+                      <th className="py-2 px-4 border border-black/35" colSpan={5}>Amount Due</th>
                     </tr>
                     <tr className="bg-gray-100">
-                      <th className="py-2 px-4 border border-slate-300" colSpan={2}>Current</th>
-                      <th className="py-2 px-4 border border-slate-300" colSpan={3}>Past Due</th>
+                      <th className="py-2 px-4 border border-black/35" colSpan={2}>Current</th>
+                      <th className="py-2 px-4 border border-black/35" colSpan={3}>Past Due</th>
                     </tr>
                     <tr className="bg-gray-100">
-                      <th className="py-2 px-4 border border-slate-300">less than 90 Days</th>
-                      <th className="py-2 px-4 border border-slate-300">91-365 days</th>
-                      <th className="py-2 px-4 border border-slate-300">Over 1 year</th>
-                      <th className="py-2 px-4 border border-slate-300">Over 2 years</th>
-                      <th className="py-2 px-4 border border-slate-300">Over 3 years and onwards</th>
+                      <th className="py-2 px-4 border border-black/35">less than 90 Days</th>
+                      <th className="py-2 px-4 border border-black/35">91-365 days</th>
+                      <th className="py-2 px-4 border border-black/35">Over 1 year</th>
+                      <th className="py-2 px-4 border border-black/35">Over 2 years</th>
+                      <th className="py-2 px-4 border border-black/35">Over 3 years and onwards</th>
                     
                     </tr>
                   </thead>
@@ -125,10 +172,10 @@ header.style.width = `${maxWidth}px`;
                     .filter(student => calculateTotalBalance(student.accounts) !== 0)
                     .map((student, index) => (
                       <tr key={student.studentno}>
-                        <td className="py-2 px-4 border border-slate-300">{index+1}.</td>
-                        <td className="py-2 px-4 border border-slate-300">{student.name}</td>
-                        <td className="py-2 px-4 border border-slate-300">{student.studentno}</td>
-                        <td className="py-2 px-4 border border-slate-300 text-end">{formatCurrency(calculateTotalBalance(student.accounts))}</td>
+                        <td className="py-2 px-4 border border-black/35">{index+1}.</td>
+                        <td className="py-2 px-4 border border-black/35">{student.name}</td>
+                        <td className="py-2 px-4 border border-black/35">{student.studentno}</td>
+                        <td className="py-2 px-4 border border-black/35 text-end">{formatCurrency(calculateTotalBalance(student.accounts))}</td>
                         {renderAmountDueAging(student.accounts)}
                         {/* Add Amount Due logic here */}
                       </tr>
@@ -151,12 +198,22 @@ header.style.width = `${maxWidth}px`;
       };
 
       return (
-        <div className="p-4" id="printableArea">
-          <h1 className="text-lg text-center font-bold mb-2">SCHEDULE OF ACCOUNTS RECEIVABLE</h1>
-          <p className='text-md text-center font-semibold mb-4'>As at <u>{formattedDate}</u></p>
-          <p className='text-md'>Entity Name: PALAWAN STATE UNIVERSITY</p>
-          <p className='text-md mb-4'>Fund Cluster: 164</p>
-          {renderTable()}
+        <div className="p-4 relative">
+          <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
+          onClick={handlePrint}
+          >
+           <IoMdPrint className='text-6xl' />
+           <p className='text-sm'>PRINT</p>
+          </button>
+          <div id="printableArea">
+            <h1 className="text-lg text-center font-bold mb-2">SCHEDULE OF ACCOUNTS RECEIVABLE</h1>
+            <p className='text-md text-center font-semibold mb-4'>As at <u>{formattedDate}</u></p>
+            <p className='text-md'>Entity Name: PALAWAN STATE UNIVERSITY</p>
+            <p className='text-md mb-4'>Fund Cluster: 164</p>
+            {renderTable()}
+            {renderSummaryTable()}
+          </div>
+         
         </div>
       );
 }

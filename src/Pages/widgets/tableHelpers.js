@@ -4,7 +4,7 @@ export const renderAmountDueAging = (accounts) => {
     const balancesByCategory = calculateAgingBalances(accounts);
   
     return agingCategories.map((category, index) => (
-      <td key={index} className="py-2 px-4 text-end border border-slate-300">
+      <td key={index} className="py-2 px-4 text-end border border-black/35">
         {formatCurrency(balancesByCategory[category])}
       </td>
     ));
@@ -19,36 +19,7 @@ export const renderAmountDueAging = (accounts) => {
     return formattedAmount.includes('.') ? formattedAmount : `${formattedAmount}.00`;
    };
   
-//   export const renderTotalAging = (totalBalance) => {
-//     const agingCategories = ['over90', '91to365', 'over1Year', 'over2Years', 'over3YearsOnwards'];
-  
-//     const balancesByCategory = calculateAgingBalancesForTotal(totalBalance);
-  
-//     return agingCategories.map((category, index) => (
-//       <td key={index} className="bg-gray-200 py-2 px-4">
-//         {formatCurrency(balancesByCategory[category])}
-//       </td>
-//     ));
-//   };
 
-// export const renderTotalAging = (totalBalance, students) => {
-//     const agingCategories = ['over90', '91to365', 'over1Year', 'over2Years', 'over3YearsOnwards'];
-  
-//     const balancesByCategory = calculateAgingBalancesForTotal(totalBalance);
-  
-//     students.forEach(student => {
-//       const studentAgingBalances = calculateAgingBalances(student.accounts);
-//       agingCategories.forEach(category => {
-//         balancesByCategory[category] += studentAgingBalances[category];
-//       });
-//     });
-  
-//     return agingCategories.map((category, index) => (
-//       <td key={index} className=" py-2 px-4 text-end border border-slate-300">
-//         {formatCurrency(balancesByCategory[category])}
-//       </td>
-//     ));
-//   };
 
 export const renderTotalAging = (students) => {
     const agingCategories = ['over90', '91to365', 'over1Year', 'over2Years', 'over3YearsOnwards'];
@@ -69,7 +40,7 @@ export const renderTotalAging = (students) => {
     });
   
     return agingCategories.map((category, index) => (
-      <td key={index} className="border border-slate-300 py-2 px-4 text-end">
+      <td key={index} className="border border-black/35 py-2 px-4 text-end">
         {formatCurrency(balancesByCategory[category])}
       </td>
     ));
@@ -112,6 +83,46 @@ export const renderTotalAging = (students) => {
     });
   
     return agingCategories;
+  };
+
+
+  export const calculateTotalBalanceAndAgingByCollege = (students) => {
+    const balancesByCollege = {};
+    const agingCategories = ['over90', '91to365', 'over1Year', 'over2Years', 'over3YearsOnwards'];
+  
+    students.forEach(student => {
+      const collegeId = student.collegeid;
+  
+      if (!balancesByCollege[collegeId]) {
+        balancesByCollege[collegeId] = {
+          totalBalance: 0,
+          agingByCategory: {
+            over90: 0,
+            '91to365': 0,
+            over1Year: 0,
+            over2Years: 0,
+            over3YearsOnwards: 0,
+          },
+        };
+      }
+  
+      balancesByCollege[collegeId].totalBalance += calculateTotalBalance(student.accounts);
+  
+      const studentAgingBalances = calculateAgingBalances(student.accounts);
+      agingCategories.forEach(category => {
+        balancesByCollege[collegeId].agingByCategory[category] += studentAgingBalances[category];
+      });
+    });
+  
+    return balancesByCollege;
+  };
+
+  export   const calculateTotalBalance = (accounts) => {
+    // Calculate total balance
+    const totalBalance = accounts.reduce((total, reg) => total + reg.balance, 0);
+
+    // return totalBalance !== 0 ? totalBalance : 0;
+    return totalBalance;
   };
   
   export const calculateAgingBalancesForTotal = (totalBalance) => {

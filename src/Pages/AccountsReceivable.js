@@ -4,7 +4,7 @@ import DataComponent from './widgets/DataComponent';
 import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
 import { json } from 'react-router-dom';
-import LoadingIcons from 'react-loading-icons'
+// import LoadingIcons from 'react-loading-icons'
 const AccountsReceivable = () => {
   const [hasData, setHasData] = useState(false);
   const [isFetching, setIsFetching]= useState(false);
@@ -49,6 +49,7 @@ const AccountsReceivable = () => {
         setHasData(false);
         setStudentData([]);
         setIsFetching(true);
+        setProgressPercentage(0);
         console.time();
         const eventSource = new EventSource(`http://10.125.0.222:8080/rptapi/index.php/accountsReceivable?formattedDate=${formattedDate}`);
 
@@ -103,7 +104,7 @@ const AccountsReceivable = () => {
    
     <div className='w-[90vw] h-screen'>
       <div className='flex flex-row w-full'>
-          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 bg-red-600'>
+          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500'>
             <h1 className='text-2xl mb-4'>Accounts Receivable</h1>
             <Datepicker setFormattedDate={setFormattedDate} />
             <button className={`bg-transparent
@@ -126,17 +127,12 @@ const AccountsReceivable = () => {
             </div>
             )}
 
-<div className='w-64'>
-          <LoadingIcons.Puff   />  
-        </div>
+
           </div>
         <div className='flex-grow h-screen p-2 overflow-y-scroll'>
         {/* <DataComponent /> */}
-          {hasData ? <ArTable formattedDate={formattedDate} studentData={studentData}  />
-        :
-        <div className='w-64'>
-          <LoadingIcons.Bars />  
-        </div>
+          {hasData && <ArTable formattedDate={formattedDate} studentData={studentData}  />
+       
         }
         
         </div>
