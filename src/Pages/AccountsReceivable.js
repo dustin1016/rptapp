@@ -46,6 +46,7 @@ const AccountsReceivable = () => {
 
 
       const fetchData = async () => {
+        console.log(isFetching);
         setHasData(false);
         setStudentData([]);
         setIsFetching(true);
@@ -94,6 +95,7 @@ const AccountsReceivable = () => {
         return () => {
           eventSource.close();
           setIsFetching(false);
+          setHasData(true);
         };
       };
   

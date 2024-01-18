@@ -68,8 +68,8 @@ const ArTable = ({formattedDate, studentData}) =>{
   
     return (
       <div>
-        <h2 className="text-2xl font-bold mb-2">Accounts Receivable Summary</h2>
-        <table className="table-auto bg-white border border-slate-400 text-sm">
+        <h2 className="text-md font-bold mb-2">Accounts Receivable Summary</h2>
+        <table className="table-auto bg-white border border-slate-400 text-xs">
           <thead>
             <tr className="bg-gray-100">
               <th className="py-2 px-4 border border-black/35" rowSpan={3}>College Name</th>
@@ -144,8 +144,8 @@ const ArTable = ({formattedDate, studentData}) =>{
             {Object.entries(groupedData).map(([collegeId, { students, totalBalance }]) => (
               totalBalance !== 0 && (
                 <React.Fragment key={collegeId}>
-                <h2 className="text-2xl font-bold mb-2">{groupedData[collegeId].students[0].collegeName}</h2>
-                <table className="bg-white border-collapse border border-slate-400 table-auto mb-6 text-sm">
+                <h2 className="text-md font-bold mb-2">{groupedData[collegeId].students[0].collegeName}</h2>
+                <table className="bg-white border-collapse border border-slate-400 table-auto mb-6 text-xs">
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="py-2 px-4 border border-black/35" rowSpan={3}>No.</th>
