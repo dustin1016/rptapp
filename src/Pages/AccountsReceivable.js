@@ -25,9 +25,9 @@ const AccountsReceivable = () => {
         }
       }, [isFetching]);
 
-      useEffect(() => {
-        console.log(studentData);
-      }, [studentData]);
+      // useEffect(() => {
+      //   console.log(studentData);
+      // }, [studentData]);
       //css of progress bar
       const progressCss = {
         width: `${progressPercentage}%`,

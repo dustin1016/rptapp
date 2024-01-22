@@ -145,10 +145,10 @@ const ArTable = ({formattedDate, studentData}) =>{
               totalBalance !== 0 && (
                 <React.Fragment key={collegeId}>
                 <h2 className="text-md font-bold mb-2">{groupedData[collegeId].students[0].collegeName}</h2>
-                <table className="bg-white border-collapse border border-slate-400 table-auto mb-6 text-xs">
+                <table className="bg-white border-collapse border border-slate-400 mb-6 text-xs">
                   <thead>
                     <tr className="bg-gray-100">
-                      <th className="py-2 px-4 border border-black/35" rowSpan={3}>No.</th>
+                      <th className="py-1 border border-black/35" rowSpan={3}>No.</th>
                       <th className="py-2 px-4 border border-black/35" rowSpan={3}>Name of Debtor</th>
                       <th className="py-2 px-4 border border-black/35" rowSpan={3}>Student Number</th>
                       <th className="py-2 px-4 border border-black/35" rowSpan={3}>Amount Balance</th>
@@ -172,7 +172,7 @@ const ArTable = ({formattedDate, studentData}) =>{
                     .filter(student => calculateTotalBalance(student.accounts) !== 0)
                     .map((student, index) => (
                       <tr key={student.studentno}>
-                        <td className="py-2 px-4 border border-black/35">{index+1}.</td>
+                        <td className="py-1 border border-black/35">{index+1}.</td>
                         <td className="py-2 px-4 border border-black/35">{student.name}</td>
                         <td className="py-2 px-4 border border-black/35">{student.studentno}</td>
                         <td className="py-2 px-4 border border-black/35 text-end">{formatCurrency(calculateTotalBalance(student.accounts))}</td>
