@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 
-const Datepicker = ({setFormattedDate}) => {
+const Datepicker = ({setFormattedDate, label}) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleDateChange = (date) => {
@@ -13,7 +13,7 @@ const Datepicker = ({setFormattedDate}) => {
 
   return (
     <div className="w-full max-w-xs">
-    <h1 className='text-xl mb-4'>Select 'As Of' Date</h1>
+    <h1 className='text-xl mb-4'>{label}</h1>
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}

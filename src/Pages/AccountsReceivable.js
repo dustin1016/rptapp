@@ -108,7 +108,7 @@ const AccountsReceivable = () => {
       <div className='flex flex-row w-full'>
           <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500'>
             <h1 className='text-2xl mb-4'>Accounts Receivable</h1>
-            <Datepicker setFormattedDate={setFormattedDate} />
+            <Datepicker setFormattedDate={setFormattedDate} label={"Select 'As Of' Date"} />
             <button className={`bg-transparent
             hover:bg-blue-500 mt-4 w-3/4
               text-blue-700 font-semibold
