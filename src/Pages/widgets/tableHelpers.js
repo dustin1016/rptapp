@@ -18,8 +18,32 @@ export const renderAmountDueAging = (accounts) => {
     // Ensure there are always two decimal places
     return formattedAmount.includes('.') ? formattedAmount : `${formattedAmount}.00`;
    };
-  
 
+   export   const formatAmount = (amountString) => {
+    //format amount from transaction logs data
+    const amount = parseFloat(amountString).toFixed(2);
+    const formattedAmount = formatter.format(amount);
+ 
+    //remove currency symbol
+    // return formattedAmount.substring(1);
+    return formattedAmount.replace('₱', '');
+
+  };
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency:'PHP',
+   
+  
+    // These options are needed to round to whole numbers if that's what you want.
+    minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+    maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
+  });
+  
+ export   const formatTime = (timeString) => {
+  const date = new Date(`2000-01-01 ${timeString}`);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
 
 export const renderTotalAging = (students) => {
     const agingCategories = ['over90', '91to365', 'over1Year', 'over2Years', 'over3YearsOnwards'];
