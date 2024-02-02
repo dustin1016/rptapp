@@ -7,8 +7,12 @@ const AssessmentTable = ({ collections, setAssessmentSummary }) => {
   useEffect(()=>{
     const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
     setSubtotal(subtotal1)
+
+    
     const totalOriginal = collections.reduce((acc, curr) => acc + parseFloat(curr.originalBalance), 0).toFixed(4);
     setTotalOriginalBalance(totalOriginal);
+  
+
     setAssessmentSummary(subtotal1)
   })
 

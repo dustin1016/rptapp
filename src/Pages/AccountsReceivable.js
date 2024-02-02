@@ -13,6 +13,7 @@ const AccountsReceivable = () => {
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [showDiv, setShowDiv] = useState(false);
   const [studProgress, setStudProgress] = useState('');
+ 
     useEffect(() => {
         document.title = 'Accounts Receivable';
       }, []);

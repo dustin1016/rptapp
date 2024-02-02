@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
 import CollectionsTable from './widgets/CollectionsTable';
@@ -9,10 +9,13 @@ import AssessmentTable from './widgets/AssessmentTable';
 import AddingTable from './widgets/AddingTable';
 import ChangingTable from './widgets/ChangingTable';
 import DroppingTable from './widgets/DroppingTable';
-
+import TableNav from './widgets/TableNav';
+import TransactionLogSummary from './widgets/TransactionLogSummary';
+import { IoMdPrint } from "react-icons/io";
 const TransactionLogs = () => {
   const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [isFetching, setIsFetching]= useState(false);
+  const [hasData, setHasData] = useState(false);
 
   //array states for cashier collections
   const [cashierSummary, setCashierSummary] = useState(0.00);
@@ -46,12 +49,94 @@ const TransactionLogs = () => {
   const [droppingSummary, setDroppingSummary] = useState(0.00);
   const [droppingTransactions, setDroppingTransactions] = useState([]);
 
+  const originalBody = useRef('');
+  const iframeRef = useRef(null);
+  //table navigations
+  const [visibleTables, setVisibleTables] = useState([]);
+
+  const scrollToTable = (tableId) => {
+    const tableElement = document.getElementById(tableId);
+
+    if (tableElement) {
+      tableElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const toggleTableVisibilityById = (tableId) => {
+    const tableElement = document.getElementById(tableId);
+ 
+    
+    setVisibleTables((prevVisibleTables) => {
+      const isVisible = prevVisibleTables.includes(tableId);
+
+      if (isVisible) {
+        tableElement.classList.add('hidden');
+        return prevVisibleTables.filter((id) => id !== tableId);
+      } else {
+        tableElement.classList.remove('hidden');
+        return [...prevVisibleTables, tableId];
+      }
+    });
+  };
+  const tables = [
+    {data:cashierCollections, summary:cashierSummary, name:'Cashier Collections', table:'collectionsTable'},
+    {data:grantAidCollections, summary:grantAidSummary, name:'Grant and Aid',table:'grantAidTable'},
+    {data:schoCollections, summary:schoSummary, name:'Free Higher Education', table:'schoTable'},
+    {data:specialClassTransactions, summary:specialClassSummary, name:'Special Class', table:'specialClassTable'},
+    {data:assessmentTransactions, summary:assessmentSummary, name:'Assessment', table:'assessmentTable'},
+    {data:addingTransactions, summary:addingSummary, name:'Adding', table:'addingTable'},
+    {data:changingTransactions, summary:changingSummary, name:'Changing', table:'changingTable'},
+    {data:droppingTransactions, summary:droppingSummary, name:'Dropping', table:'droppingTable'},
+  ];
+
+  const getVisibleTableIds = (tables) => {
+    //function to check every data from tables data to see if it is not empty
+    return tables
+      .filter((table) => table.data.length > 0)
+      .map((table) => table.table);
+  };
+
+
+  const clearData = () => {
+    setCashierSummary(0.00);
+    setGrantAidSummary(0.00);
+    setSchoSummary(0.00);
+    setSpecialClassSummary(0.00);
+    setAssessmentSummary(0.00);
+    setAddingSummary(0.00);
+    setChangingSummary(0.00);
+    setDroppingSummary(0.00);
+   
+    setCashierCollections([]);
+    setGrantAidCollections([]);
+    setSchoCollections([]);
+    setSpecialClassTransactions([]);
+    setAssessmentTransactions([]);
+    setAddingTransactions([]);
+    setChangingTransactions([]);
+    setDroppingTransactions([]);
+    setVisibleTables([]);
+  }
 
   useEffect(()=>{
-    console.log(isFetching)
+    const dataCheck = tables.every(table => table.data.length === 0); //check if all data are empty, meaning no transactions has been done for the day yet
+    
+      if (dataCheck){
+        //there is no data
+        setHasData(false);
+        
+      } else {
+        const visibleTables = getVisibleTableIds(tables);
+        setVisibleTables(visibleTables);
+        
+        setHasData(true);
+       
+      }
   }, [isFetching]);
   const generateData = async()=>{
     setIsFetching(true);
+    setHasData(false);
+    clearData();
     try {
       
       // Fetch data sequentially
@@ -67,6 +152,7 @@ const TransactionLogs = () => {
 
       // All fetches completed sequentially, do any additional logic here
       setIsFetching(false);
+      
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -193,12 +279,31 @@ const fetchDroppingTransactions = async () => {
   }
 };
 
+const handlePrint = () => {
+  const element = document.getElementById('printable');
+
+  if (element){
+    const printContents = document.getElementById('printable').innerHTML;
+         
+    originalBody.current = document.body.innerHTML; // Save original body content
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalBody.current; // Restore original body content
+  } else {
+    console.log('asdf')
+  }
+  
+};
+
   return (
     <div>
       <div className='w-[90vw] h-screen'>
       <div className='flex flex-row w-full'>
-          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500'>
-            <h1 className='text-2xl mb-4'>Daily Transactions Log</h1>
+          <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
+            <h1 className='text-2xl mb-4 npr'>Daily Transactions Log</h1>
             <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
             
            
@@ -226,8 +331,17 @@ const fetchDroppingTransactions = async () => {
 }
             </button>
             
-            
-
+              
+          {hasData && 
+         <div className='mt-4'>
+                  <TableNav
+                tables={tables}
+                visibleTables={visibleTables}
+                scrollToTable={scrollToTable}
+                toggleTableVisibilityById={toggleTableVisibilityById}
+              />
+         </div>
+          }
          
             
            
@@ -235,7 +349,14 @@ const fetchDroppingTransactions = async () => {
           </div>
         <div className='flex-grow h-screen p-3 overflow-y-scroll'>
           {isFetching ? <></> :
-            <>
+            <div className='flex flex-col pl-16'>
+              {hasData && <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
+              onClick={()=>handlePrint()}
+              >
+              <IoMdPrint className='text-6xl' />
+              <p className='text-sm'>PRINT</p>
+              </button>}
+          <div id='printable'>
             {cashierCollections.length > 0 && 
             <div className='mb-6'>
               <CollectionsTable collections={cashierCollections} setCashierSummary={setCashierSummary} />
@@ -285,7 +406,25 @@ const fetchDroppingTransactions = async () => {
               <DroppingTable collections={droppingTransactions} setDroppingSummary={setDroppingSummary} />
             </div>
             }
-            </>
+
+
+             
+                  {hasData &&  <div className='mb-6'>
+                      <TransactionLogSummary 
+                      cashierSummary={cashierSummary}
+                      assessmentSummary={assessmentSummary}
+                      grantAidSummary={grantAidSummary}
+                      schoSummary={schoSummary}
+                      specialClassSummary={specialClassSummary}
+                      addingSummary={addingSummary}
+                      changingSummary={changingSummary}
+                      droppingSummary={droppingSummary}
+                      />
+                    </div>}
+                </div>
+            </div>
+
+         
           }
         
         </div>
