@@ -14,7 +14,7 @@ const TransactionLogSummary = ({
 
   
     //get the credit summary
-    const creditSummary = (parseFloat(assessmentSummary) < 0 ? parseFloat(assessmentSummary) : 0) + (parseFloat(changingSummary) >= 0 ? parseFloat(changingSummary) : 0) + parseFloat(cashierSummary) + parseFloat(schoSummary) + parseFloat(grantAidSummary) + parseFloat(droppingSummary);
+    const creditSummary = (parseFloat(assessmentSummary) < 0 ? parseFloat(Math.abs(assessmentSummary)) : 0) + (parseFloat(changingSummary) >= 0 ? parseFloat(Math.abs(changingSummary)) : 0) + parseFloat(cashierSummary) + parseFloat(Math.abs(schoSummary)) + parseFloat(Math.abs(grantAidSummary)) + parseFloat(Math.abs(droppingSummary));
         
     //get the debits/receivables
     const debitSummary = (parseFloat(assessmentSummary) >= 0 ? parseFloat(assessmentSummary) : 0) + (parseFloat(changingSummary) < 0 ? parseFloat(changingSummary) : 0) + parseFloat(specialClassSummary) + parseFloat(addingSummary);

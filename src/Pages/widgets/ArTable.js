@@ -15,7 +15,7 @@ import {
 
 
 
-const ArTable = ({formattedDate, studentData}) =>{
+const ArTable = ({formattedDate, studentData, isDetailed}) =>{
 
 
 
@@ -210,7 +210,7 @@ const ArTable = ({formattedDate, studentData}) =>{
             <p className='text-md text-center font-semibold mb-4'>As at <u>{formattedDate}</u></p>
             <p className='text-md'>Entity Name: PALAWAN STATE UNIVERSITY</p>
             <p className='text-md mb-4'>Fund Cluster: 164</p>
-            {renderTable()}
+            {isDetailed && renderTable()}
             {renderSummaryTable()}
           </div>
          
