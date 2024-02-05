@@ -14,7 +14,7 @@ const TransactionLogSummary = ({
 
   
     //get the credit summary
-    const creditSummary = (parseFloat(assessmentSummary) < 0 ? parseFloat(Math.abs(assessmentSummary)) : 0) + (parseFloat(changingSummary) >= 0 ? parseFloat(Math.abs(changingSummary)) : 0) + parseFloat(cashierSummary) + parseFloat(Math.abs(schoSummary)) + parseFloat(Math.abs(grantAidSummary)) + parseFloat(Math.abs(droppingSummary));
+    const creditSummary = (parseFloat(assessmentSummary) < 0 ? Math.abs(parseFloat(assessmentSummary)) : 0) + (parseFloat(changingSummary) >= 0 ? Math.abs(parseFloat(changingSummary)) : 0) + parseFloat(cashierSummary) + Math.abs(parseFloat(schoSummary)) + Math.abs(parseFloat(grantAidSummary)) + Math.abs(parseFloat(droppingSummary));
         
     //get the debits/receivables
     const debitSummary = (parseFloat(assessmentSummary) >= 0 ? parseFloat(assessmentSummary) : 0) + (parseFloat(changingSummary) < 0 ? parseFloat(changingSummary) : 0) + parseFloat(specialClassSummary) + parseFloat(addingSummary);
@@ -25,8 +25,8 @@ const TransactionLogSummary = ({
                 <thead>
                     <tr>
                         <th></th>
-                        <th className="border-b-2 font-semibold text-center">DEBITS</th>
-                        <th className="border-b-2 font-semibold text-center">CREDITS</th>
+                        <th className="border-b-2 font-semibold text-center">DEBIT</th>
+                        <th className="border-b-2 font-semibold text-center">CREDIT</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,31 +39,31 @@ const TransactionLogSummary = ({
                     <tr>
                         <td>GRANT AND AID</td>
                         <td></td>
-                        <td className="text-end">{formatAmount(grantAidSummary)}</td>
+                        <td className="text-end">{formatAmount(Math.abs(parseFloat(grantAidSummary)))}</td>
                     </tr>
 
                     <tr>
                         <td>FREE HIGHER EDUCATION</td>
                         <td></td>
-                        <td className="text-end">{formatAmount(schoSummary)}</td>
+                        <td className="text-end">{formatAmount(schoSummary) }</td>
                     </tr>
 
                     <tr>
                         <td>DROPPING</td>
                         <td></td>
-                        <td className="text-end">{formatAmount(droppingSummary)}</td>
+                        <td className="text-end">{formatAmount(Math.abs(parseFloat(droppingSummary))) }</td>
                     </tr>
 
                     <tr>
                         <td>ASSESSMENT</td>
                         <td className="text-end">{parseFloat(assessmentSummary) >= 0 ? formatAmount(assessmentSummary): ''}</td>
-                        <td className="text-end">{parseFloat(assessmentSummary) < 0 ? formatAmount(assessmentSummary) : ''}</td>
+                        <td className="text-end">{parseFloat(assessmentSummary) < 0 ? formatAmount(Math.abs(parseFloat(assessmentSummary))) : ''}</td>
                     </tr>
 
                     <tr>
                         <td>ADDING</td>
                         <td className="text-end">{parseFloat(addingSummary) >= 0 ? formatAmount(addingSummary): ''}</td>
-                        <td className="text-end">{parseFloat(addingSummary) < 0 ? formatAmount(addingSummary) : ''}</td>
+                        <td className="text-end">{parseFloat(addingSummary) < 0 ? formatAmount(Math.abs(parseFloat(addingSummary))) : ''}</td>
                     </tr>
 
                     <tr>
@@ -75,7 +75,7 @@ const TransactionLogSummary = ({
                     <tr className="border-b-2 border-black/50">
                         <td className="border-b-2">CHANGING</td>
                         <td className="text-end border-b-2">{parseFloat(changingSummary) >= 0 ? formatAmount(changingSummary): ''}</td>
-                        <td className="text-end border-b-2">{parseFloat(changingSummary) < 0 ? formatAmount(changingSummary) : ''}</td>
+                        <td className="text-end border-b-2">{parseFloat(changingSummary) < 0 ? formatAmount(Math.abs(parseFloat(changingSummary))) : ''}</td>
                     </tr>
                        
                     <tr className="border-b-4 border-black/50">
