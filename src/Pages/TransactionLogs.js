@@ -12,11 +12,23 @@ import DroppingTable from './widgets/DroppingTable';
 import TableNav from './widgets/TableNav';
 import TransactionLogSummary from './widgets/TransactionLogSummary';
 import { IoMdPrint } from "react-icons/io";
+
+
+const formatDate = (dateString) => {
+  //returns 2024-01-01 as Jan. 1, 2024
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formattedString = new Date(dateString).toLocaleDateString('en-US', options);
+
+  return formattedString;
+};
+
+
 const TransactionLogs = () => {
   const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [isFetching, setIsFetching]= useState(false);
   const [hasData, setHasData] = useState(false);
-
+  const [clickCount, setClickCount] = useState(0);
+  
   //array states for cashier collections
   const [cashierSummary, setCashierSummary] = useState(0.00);
   const [cashierCollections, setCashierCollections] = useState([]);
@@ -50,7 +62,7 @@ const TransactionLogs = () => {
   const [droppingTransactions, setDroppingTransactions] = useState([]);
 
   const originalBody = useRef('');
-  const iframeRef = useRef(null);
+  const printableRef = useRef(null);
   //table navigations
   const [visibleTables, setVisibleTables] = useState([]);
 
@@ -116,7 +128,13 @@ const TransactionLogs = () => {
     setChangingTransactions([]);
     setDroppingTransactions([]);
     setVisibleTables([]);
+
+ 
   }
+
+  useEffect(() => {
+    document.title = 'Daily Transactions Log';
+  }, []);
 
   useEffect(()=>{
     const dataCheck = tables.every(table => table.data.length === 0); //check if all data are empty, meaning no transactions has been done for the day yet
@@ -126,14 +144,16 @@ const TransactionLogs = () => {
         setHasData(false);
         
       } else {
+     
         const visibleTables = getVisibleTableIds(tables);
         setVisibleTables(visibleTables);
-        
         setHasData(true);
+        
        
       }
   }, [isFetching]);
   const generateData = async()=>{
+    setClickCount(clickCount + 1);
     setIsFetching(true);
     setHasData(false);
     clearData();
@@ -279,23 +299,53 @@ const fetchDroppingTransactions = async () => {
   }
 };
 
-const handlePrint = () => {
-  const element = document.getElementById('printable');
+// const handlePrint = () => {
+//   const element = document.getElementById('printable');
 
-  if (element){
-    const printContents = document.getElementById('printable').innerHTML;
-         
-    originalBody.current = document.body.innerHTML; // Save original body content
-
-    document.body.innerHTML = printContents;
-
-    window.print();
-
-    document.body.innerHTML = originalBody.current; // Restore original body content
-  } else {
-    console.log('asdf')
-  }
+//   if (element){
   
+//     const printContents = element.innerHTML;
+//       originalBody.current = document.body.innerHTML;
+
+//       // Apply print-specific stylesheet
+//       const printStylesheet = document.createElement('link');
+//       printStylesheet.href = '/print-styles.css'; // Adjust the path accordingly
+//       printStylesheet.rel = 'stylesheet';
+//       printStylesheet.type = 'text/css';
+//       document.head.appendChild(printStylesheet);
+
+//       document.body.innerHTML = printContents;
+
+//       window.print();
+
+//       // Remove print-specific stylesheet
+//       document.head.removeChild(printStylesheet);
+
+//       // Restore original body content after printing
+//       document.body.innerHTML = originalBody.current;
+//   } else {
+//     console.log('asdf')
+//   }
+  
+// };
+
+const handlePrint = () => {
+  const printWindow = window.open('', '_blank');
+  const printableContent = printableRef.current.innerHTML;
+
+  if (printWindow) {
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>PSU ${formatDate(formattedDate)} Transactions Log</title>`);
+    printWindow.document.write('<link rel="stylesheet" href="/print-styles.css" type="text/css" />');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(printableContent);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    setTimeout(() => {
+      printWindow.print();
+    }, 200);
+  } else {
+    console.error('Failed to open print window');
+  }
 };
 
   return (
@@ -310,7 +360,7 @@ const handlePrint = () => {
             <button className={`bg-transparent
             hover:bg-blue-500 mt-4 w-full
               text-blue-700 font-semibold 
-              hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded
+              hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded npr
               ${isFetching ? 'cursor-not-allowed flex items-center justify-center' : 'cursor-pointer'}`}
               onClick={()=>generateData()}
               disabled={isFetching}
@@ -347,16 +397,29 @@ const handlePrint = () => {
            
 
           </div>
-        <div className='flex-grow h-screen p-3 overflow-y-scroll'>
+        <div className='flex-grow h-screen p-3 overflow-y-scroll' >
           {isFetching ? <></> :
-            <div className='flex flex-col pl-16'>
-              {hasData && <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
+            <div className='flex flex-col pl-16 rm-padding' id='printContainer'>
+              {hasData && <div className='npr'>
+
+                <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
               onClick={()=>handlePrint()}
               >
               <IoMdPrint className='text-6xl' />
               <p className='text-sm'>PRINT</p>
-              </button>}
-          <div id='printable'>
+              </button>
+                </div>
+                }
+          <div id='printable' ref={printableRef} >
+            {(hasData && clickCount > 0) && 
+            <>
+            <p className='text-sm font-semibold'>PALAWAN STATE UNIVERSITY</p>
+            <p className='text-sm font-semibold uppercase'>Accounts Receivable daily transaction log</p>
+            <p className='text-sm font-semibold'>Fund 164</p>
+            <p className='text-sm font-semibold'>For Date: {formatDate(formattedDate)}</p>
+            </>
+            
+            }
             {cashierCollections.length > 0 && 
             <div className='mb-6'>
               <CollectionsTable collections={cashierCollections} setCashierSummary={setCashierSummary} />
@@ -409,7 +472,7 @@ const handlePrint = () => {
 
 
              
-                  {hasData &&  <div className='mb-6'>
+                  {hasData ?  <div className='mb-6'>
                       <TransactionLogSummary 
                       cashierSummary={cashierSummary}
                       assessmentSummary={assessmentSummary}
@@ -420,7 +483,10 @@ const handlePrint = () => {
                       changingSummary={changingSummary}
                       droppingSummary={droppingSummary}
                       />
-                    </div>}
+                    </div> : 
+                    <>
+                      {clickCount > 0 && <h4 className='text-center font-semibold text-xl'>No Transactions Found for the selected date</h4>}
+                    </>}
                 </div>
             </div>
 

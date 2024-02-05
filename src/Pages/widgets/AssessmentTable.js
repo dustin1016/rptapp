@@ -55,6 +55,27 @@ const AssessmentTable = ({ collections, setAssessmentSummary }) => {
           </tr>
         </tfoot>
       </table>
+      {/* <table className='text-xs border-collapse border'>
+        <thead>
+            <tr>
+              <th className="py-2 px-4 border border-black/35"></th>
+              <th className="py-2 px-4 border border-black/35"></th>
+              <th className="py-2 px-4 border border-black/35">Original Assessment</th>
+              <th className="py-2 px-4 border border-black/35">Modified Assessment</th>
+              <th className="py-2 px-4 border border-black/35"></th>
+              <th className="py-2 px-4 border border-black/35"></th>
+            </tr>
+        </thead>
+         <tbody>
+         <tr>
+            
+            <td  className="py-2 px-4 border border-black/35 font-semibold text-end" colSpan={2}>Subtotal:</td>
+            <td  className="py-2 px-4 border border-black/35 font-semibold text-end">{formatAmount(totalOriginalBalance)}</td>
+            <td  className="py-2 px-4 border border-black/35 font-semibold text-end">{formatAmount(subtotal)}</td>
+        
+          </tr>
+         </tbody>
+      </table> */}
     </div>
   );
 };

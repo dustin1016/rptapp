@@ -42,7 +42,8 @@ export const renderAmountDueAging = (accounts) => {
   
  export   const formatTime = (timeString) => {
   const date = new Date(`2000-01-01 ${timeString}`);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formattedTimeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return formattedTimeString.replace('AM','').replace('PM', '')
 };
 
 export const renderTotalAging = (students) => {

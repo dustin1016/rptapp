@@ -1,0 +1,31 @@
+
+
+
+
+@media print { 
+
+    /* body {
+      visibility: hidden;
+    } */
+    .npr { display: none !important; } 
+  
+    .rm-padding { padding-left: 0.5rem !important;}
+  
+    #printable {
+      overflow-y: visible !important;
+    }
+
+    * {
+        color: red !important;
+    }
+    .text-xs {
+        font-size: 0.75rem !important; /* 12px */
+        line-height: 1rem !important; /* 16px */
+        color: blue !important;
+    }
+
+    .text-md {
+        font-size: 1rem !important; /* 16px */
+        line-height: 1.5rem !important; /* 24px */
+    }
+   }

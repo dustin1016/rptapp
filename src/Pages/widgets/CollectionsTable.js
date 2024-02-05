@@ -6,7 +6,6 @@ const CollectionsTable = ({ collections, setCashierSummary }) => {
   
   useEffect(()=>{
     const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
-  
     setSubtotal(subtotal1)
   setCashierSummary(subtotal1)
   })

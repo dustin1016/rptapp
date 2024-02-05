@@ -31,3 +31,32 @@ code {
     box-shadow: 0 0 5px rgba(0, 0, 255, 0.5); /* Adjust the shadow color and size as needed */
   }
 }
+
+
+@media print { 
+
+  body {
+    visibility: hidden;
+  }
+  .npr { display: none !important; } 
+
+  .rm-padding { padding-left: 0.5rem !important;}
+
+  #printable {
+    overflow-y: visible !important;
+  }
+ }
+
+
+ @keyframes button-pulse {
+  0%, 100% {
+    border-color: #63b3ed; /* Change the color to match your design */
+  }
+  50% {
+    border-color: #4299e1; /* Change the color to match your design */
+  }
+}
+
+.pulse-border {
+  animation: button-pulse 2s infinite;
+}

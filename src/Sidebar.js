@@ -21,7 +21,7 @@ const Sidebar = ({setIsMenuHovered}) => {
 
   return (
     <div
-      className={`bg-gray-800 text-white w-40 h-screen flex flex-col items-center justify-center fixed top-0 left-0 transition-all ease-in-out duration-300 ${
+      className={`bg-gray-800 text-white w-40 h-screen flex flex-col items-center justify-center fixed top-0 left-0 transition-all ease-in-out duration-300 npr ${
         isHovered ? 'translate-x-0 opacity-100' : '-translate-x-36 opacity-60'
       }`}
       onMouseEnter={handleMouseEnter}

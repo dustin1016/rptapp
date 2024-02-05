@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import Sidebar from "./Sidebar";
 import AccountsReceivable from "./Pages/AccountsReceivable";
 import TransactionLogs from "./Pages/TransactionLogs";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { BsArrowLeft } from "react-icons/bs";
+import Home from "./Pages/Home";
 function App() {
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   
@@ -12,12 +13,14 @@ function App() {
     <Router>
       <div className="flex">
         <Sidebar setIsMenuHovered={setIsMenuHovered}/>
-        <div className={`${isMenuHovered ? 'pl-44' : 'pl-16'}`}>
+        <div className={`${isMenuHovered ? 'pl-44' : 'pl-16'} rm-padding`}>
           <Routes>
             <Route path="/accounts-receivable" element={<AccountsReceivable />} />
             <Route path="/transaction-logs" element={<TransactionLogs />} />
             {/* Add more routes as needed */}
-            <Route path="*" element={<h1>Page Not Found</h1>} /> {/* Fallback route for 404 */}
+            <Route path="*" element={
+           <Home />
+          } /> {/* Fallback route for 404 */}
           </Routes>
         </div>
       </div>
