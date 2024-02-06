@@ -220,7 +220,7 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
           </button>
           <div id="printableArea" ref={printableRef}>
             <h1 className="text-lg text-center font-bold mb-2">SCHEDULE OF ACCOUNTS RECEIVABLE</h1>
-            <p className='text-md text-center font-semibold mb-4'>As at <u>{formattedDate}</u></p>
+            <p className='text-md text-center font-semibold mb-4'>As at <u>{formatDate(formattedDate)}</u></p>
             <p className='text-md'>Entity Name: PALAWAN STATE UNIVERSITY</p>
             <p className='text-md mb-4'>Fund Cluster: 164</p>
             {isDetailed && renderTable()}
