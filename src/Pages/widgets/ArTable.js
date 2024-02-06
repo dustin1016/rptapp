@@ -1,19 +1,25 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef} from 'react';
 import { IoMdPrint } from "react-icons/io";
-import testData from '../../data/test';
+
 import colleges from '../../data/college';
 
 import { 
   renderAmountDueAging,
   renderTotalAging,
-  calculateAgingBalances,
-  calculateAgingBalancesForTotal,
+  // calculateAgingBalances,
+  // calculateAgingBalancesForTotal,
   formatCurrency,
   calculateTotalBalance,
   calculateTotalBalanceAndAgingByCollege
  } from './tableHelpers'; 
 
+ const formatDate = (dateString) => {
+  //returns 2024-01-01 as Jan. 1, 2024
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formattedString = new Date(dateString).toLocaleDateString('en-US', options);
 
+  return formattedString;
+};
 
 const ArTable = ({formattedDate, studentData, isDetailed}) =>{
 
@@ -121,18 +127,25 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
 
   
 
-    const originalBody = useRef('');
+    const printableRef = useRef(null);
        
        const handlePrint = () => {
-         const printContents = document.getElementById('printableArea').innerHTML;
-         
-         originalBody.current = document.body.innerHTML; // Save original body content
-     
-         document.body.innerHTML = printContents;
-     
-         window.print();
-     
-         document.body.innerHTML = originalBody.current; // Restore original body content
+        const printWindow = window.open('', '_blank');
+        const printableContent = printableRef.current.innerHTML;
+      
+        if (printWindow) {
+          printWindow.document.write(`<!DOCTYPE html><html><head><title>PSU ${formatDate(formattedDate)} Accounts Receivable</title>`);
+          printWindow.document.write('<link rel="stylesheet" href="/print-styles.css" type="text/css" />');
+          printWindow.document.write('</head><body>');
+          printWindow.document.write(printableContent);
+          printWindow.document.write('</body></html>');
+          printWindow.document.close();
+          setTimeout(() => {
+            printWindow.print();
+          }, 200);
+        } else {
+          console.error('Failed to open print window');
+        }
        };
   
        const renderTable = () => {
@@ -205,7 +218,7 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
            <IoMdPrint className='text-6xl' />
            <p className='text-sm'>PRINT</p>
           </button>
-          <div id="printableArea">
+          <div id="printableArea" ref={printableRef}>
             <h1 className="text-lg text-center font-bold mb-2">SCHEDULE OF ACCOUNTS RECEIVABLE</h1>
             <p className='text-md text-center font-semibold mb-4'>As at <u>{formattedDate}</u></p>
             <p className='text-md'>Entity Name: PALAWAN STATE UNIVERSITY</p>
@@ -213,7 +226,6 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
             {isDetailed && renderTable()}
             {renderSummaryTable()}
           </div>
-         
         </div>
       );
 }

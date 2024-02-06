@@ -25,6 +25,10 @@
         width: 100%;
     }
 
+    .table-auto {
+        table-layout: auto;
+    }
+
     .my-3 {
         margin-top: 0.75rem;
         margin-bottom: 0.75rem;
@@ -71,6 +75,10 @@
     .border-b-2 {    
             border-bottom: 1px rgb(0 0 0 / 0.35) solid ;   
     }
+
+    .border-b-2 {    
+        border-top: 1px rgb(0 0 0 / 0.35) solid ;   
+        }
     .border-b-4 {    
             border-bottom-width: 2px;
             border-bottom-color: black;
@@ -95,7 +103,10 @@
         width: 30rem;
         margin: auto;
     }
-
+    .text-lg {
+        font-size: 16px !important; /* 16px */
+        line-height: 24px !important; /* 24px */
+    }
     .text-md {
         font-size: 14px !important; /* 16px */
         line-height: 20px !important; /* 24px */

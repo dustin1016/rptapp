@@ -61,7 +61,7 @@ const TransactionLogs = () => {
   const [droppingSummary, setDroppingSummary] = useState(0.00);
   const [droppingTransactions, setDroppingTransactions] = useState([]);
 
-  const originalBody = useRef('');
+
   const printableRef = useRef(null);
   //table navigations
   const [visibleTables, setVisibleTables] = useState([]);
