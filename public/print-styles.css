@@ -25,6 +25,22 @@
         width: 100%;
     }
 
+    .relative {
+        position: relative;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+    .w-full-flex {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        bottom: 0;
+    }
+
     .table-auto {
         table-layout: auto;
     }

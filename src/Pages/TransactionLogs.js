@@ -338,6 +338,10 @@ const handlePrint = () => {
     printWindow.document.write('<link rel="stylesheet" href="/print-styles.css" type="text/css" />');
     printWindow.document.write('</head><body>');
     printWindow.document.write(printableContent);
+    printWindow.document.write('<div class="w-full-flex">');
+    printWindow.document.write('<p class="text-xs font-semibold">Prepared By:</p>');
+    printWindow.document.write('<p class="text-xs font-semibold">Approved By:</p>');
+    printWindow.document.write('</div>');
     printWindow.document.write('</body></html>');
     printWindow.document.close();
     setTimeout(() => {
