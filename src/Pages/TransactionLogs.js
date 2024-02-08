@@ -403,7 +403,7 @@ const handlePrint = () => {
           </div>
         <div className='flex-grow h-screen p-3 overflow-y-scroll' >
           {isFetching ? <></> :
-            <div className='flex flex-col pl-16 rm-padding' id='printContainer'>
+            <div className='flex flex-col pl-16 rm-padding ' id='printContainer'>
               {hasData && <div className='npr'>
 
                 <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
@@ -414,7 +414,7 @@ const handlePrint = () => {
               </button>
                 </div>
                 }
-          <div id='printable' ref={printableRef} >
+          <div id='printable' className='breaks' ref={printableRef} >
             {(hasData && clickCount > 0) && 
             <>
             <p className='text-sm font-semibold'>PALAWAN STATE UNIVERSITY</p>
