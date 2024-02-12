@@ -12,7 +12,8 @@ import DroppingTable from './widgets/DroppingTable';
 import TableNav from './widgets/TableNav';
 import TransactionLogSummary from './widgets/TransactionLogSummary';
 import { IoMdPrint } from "react-icons/io";
-
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import { FaFileExcel } from "react-icons/fa";
 
 const formatDate = (dateString) => {
   //returns 2024-01-01 as Jan. 1, 2024
@@ -352,6 +353,8 @@ const handlePrint = () => {
   }
 };
 
+
+
   return (
     <div>
       <div className='w-[90vw] h-screen'>
@@ -404,14 +407,29 @@ const handlePrint = () => {
         <div className='flex-grow h-screen p-3 overflow-y-scroll' >
           {isFetching ? <></> :
             <div className='flex flex-col pl-16 rm-padding' id='printContainer'>
-              {hasData && <div className='npr'>
+              {hasData &&
+              
+              <div className='npr flex flex-col fixed top-5 right-4 h-4'>
 
-                <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
+                <button className="bg-blue-500 hover:bg-blue-700 w-24 mb-6 text-center text-white font-semibold py-2 px-4 rounded"
               onClick={()=>handlePrint()}
               >
               <IoMdPrint className='text-6xl' />
               <p className='text-sm'>PRINT</p>
               </button>
+
+              <DownloadTableExcel
+                    filename={`Daily Transaction Logs - ${formatDate(formattedDate)}`}
+                    sheet="Transactions"
+                    currentTableRef={printableRef.current}
+                >
+
+                   <button className='bg-green-500 hover:bg-green-700 w-24 text-center text-white font-semibold py-2 px-4 rounded'>
+                   <FaFileExcel className='text-6xl' />
+                   <p className='text-xs'>Export Excel</p></button>
+
+                </DownloadTableExcel>
+
                 </div>
                 }
           <div id='printable' ref={printableRef} >

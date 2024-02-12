@@ -1,8 +1,8 @@
 import React, {useRef} from 'react';
 import { IoMdPrint } from "react-icons/io";
-
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import { FaFileExcel } from "react-icons/fa";
 import colleges from '../../data/college';
-
 import { 
   renderAmountDueAging,
   renderTotalAging,
@@ -151,7 +151,10 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
           console.error('Failed to open print window');
         }
        };
-  
+
+
+       
+       
        const renderTable = () => {
        
         const groupedData = groupByCollegeId();
@@ -216,12 +219,26 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
 
       return (
         <div className="p-4 relative">
-          <button className="bg-blue-500 hover:bg-blue-700 w-24 fixed top-5 right-4  text-center text-white font-semibold py-2 px-4 rounded"
+          <div className='flex flex-col fixed top-5 right-4 h-40'>
+          <button className="bg-blue-500 hover:bg-blue-700 w-24 mb-6  text-center text-white font-semibold py-2 px-4 rounded"
           onClick={handlePrint}
           >
            <IoMdPrint className='text-6xl' />
-           <p className='text-sm'>PRINT</p>
+           <p className='text-xs'>PRINT</p>
           </button>
+          <DownloadTableExcel
+                    filename={`Accounts Receivable as of ${formatDate(formattedDate)}`}
+                    sheet="Accounts"
+                    currentTableRef={printableRef.current}
+                >
+
+                   <button className='bg-green-500 hover:bg-green-700 w-24 text-center text-white font-semibold py-2 px-4 rounded'>
+                   <FaFileExcel className='text-6xl' />
+                   <p className='text-xs'>Export Excel</p></button>
+
+                </DownloadTableExcel>
+          </div>
+          
           <div id="printableArea" ref={printableRef}>
             <h1 className="text-lg text-center font-bold mb-2">SCHEDULE OF ACCOUNTS RECEIVABLE</h1>
             <p className='text-md text-center font-semibold mb-4'>As at <u>{formatDate(formattedDate)}</u></p>
