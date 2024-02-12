@@ -432,7 +432,7 @@ const handlePrint = () => {
 
                 </div>
                 }
-          <div id='printable' ref={printableRef} >
+          <div id='printable' className='breaks' ref={printableRef} >
             {(hasData && clickCount > 0) && 
             <>
             <p className='text-sm font-semibold'>PALAWAN STATE UNIVERSITY</p>

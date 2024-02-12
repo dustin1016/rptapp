@@ -5,7 +5,7 @@
 /* @media print {  */
 
     body {
-        margin: 0;
+        padding-bottom: 2rem !important;
        font-family: Tahoma, Verdana, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -17,9 +17,22 @@
     #printable {
       overflow-y: visible !important;
     }
+    table { page-break-inside:auto }
+    .breaks {
+        break-inside: avoid;
+    }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    thead { display:table-header-group }
     table tfoot {
         display: table-row-group !important;
       }
+
+      * {
+       
+        max-width: 100%;
+      }
+
+   
 
     .container {
         width: 100%;
