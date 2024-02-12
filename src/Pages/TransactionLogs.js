@@ -14,7 +14,7 @@ import TransactionLogSummary from './widgets/TransactionLogSummary';
 import { IoMdPrint } from "react-icons/io";
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
-
+import CollectionByAccounts from './widgets/CollectionByAccounts';
 const formatDate = (dateString) => {
   //returns 2024-01-01 as Jan. 1, 2024
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -61,6 +61,10 @@ const TransactionLogs = () => {
   //array states for subject dropping transactions
   const [droppingSummary, setDroppingSummary] = useState(0.00);
   const [droppingTransactions, setDroppingTransactions] = useState([]);
+
+  //array states for collections by account
+  const [accountCollectionSummary, setAccountCollectionSummary] = useState(0.00);
+  const [accountCollections, setAccountCollections] = useState([]);
 
 
   const printableRef = useRef(null);
@@ -189,7 +193,8 @@ const TransactionLogs = () => {
       }
       const result = await response.json();
   
-      setCashierCollections(result.cashierCollections)
+      setCashierCollections(result.cashierCollections);
+      setAccountCollections(result.accountCollections);
     } catch (error) {
       console.log('Error fetching data: ' + error.message); // Set error message to state
     }
@@ -489,6 +494,12 @@ const handlePrint = () => {
             {droppingTransactions.length > 0 && 
             <div className='mb-6'>
               <DroppingTable collections={droppingTransactions} setDroppingSummary={setDroppingSummary} />
+            </div>
+            }
+
+            {accountCollections.length > 0 && 
+            <div className='mb-6'>
+              <CollectionByAccounts collections={accountCollections} />
             </div>
             }
 
