@@ -133,9 +133,15 @@ const TransactionLogs = () => {
     setChangingTransactions([]);
     setDroppingTransactions([]);
     setVisibleTables([]);
-
+    setAccountCollections([])
+    setHasData(false)
+    setClickCount(0)
  
   }
+
+  useEffect(()=>{
+    clearData();
+  }, [formattedDate])
 
   useEffect(() => {
     document.title = 'Daily Transactions Log';
