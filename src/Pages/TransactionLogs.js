@@ -15,6 +15,10 @@ import { IoMdPrint } from "react-icons/io";
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
 import CollectionByAccounts from './widgets/CollectionByAccounts';
+import AddTable from './widgets/AddTable';
+import ChangeTable from './widgets/ChangeTable';
+import DropTable from './widgets/DropTable';
+
 const formatDate = (dateString) => {
   //returns 2024-01-01 as Jan. 1, 2024
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -487,19 +491,22 @@ const handlePrint = () => {
 
             {addingTransactions.length > 0 && 
             <div className='mb-6'>
-              <AddingTable collections={addingTransactions} setAddingSummary={setAddingSummary} />
+              {/* <AddingTable collections={addingTransactions} setAddingSummary={setAddingSummary} /> */}
+              <AddTable collections={addingTransactions} setAddingSummary={setAddingSummary} />
             </div>
             }
 
             {changingTransactions.length > 0 && 
             <div className='mb-6'>
-              <ChangingTable collections={changingTransactions} setChangingSummary={setChangingSummary} />
+              {/* <ChangingTable collections={changingTransactions} setChangingSummary={setChangingSummary} /> */}
+              <ChangeTable collections={changingTransactions} setChangingSummary={setChangingSummary} />
             </div>
             }
 
             {droppingTransactions.length > 0 && 
             <div className='mb-6'>
-              <DroppingTable collections={droppingTransactions} setDroppingSummary={setDroppingSummary} />
+              {/* <DroppingTable collections={droppingTransactions} setDroppingSummary={setDroppingSummary} /> */}
+              <DropTable collections={droppingTransactions} setDroppingSummary={setDroppingSummary} />
             </div>
             }
 

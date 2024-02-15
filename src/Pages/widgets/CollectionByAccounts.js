@@ -6,7 +6,7 @@ const CollectionByAccounts = ({collections}) => {
     const [subtotal, setSubtotal] = useState(0.0000);
   
     useEffect(()=>{
-        console.log(collections)
+      
       const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
       setSubtotal(subtotal1)
    

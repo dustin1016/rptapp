@@ -4,11 +4,16 @@ const AddingTable = ({ collections, setAddingSummary }) => {
   // Calculate subtotal
     const [subtotal, setSubtotal] = useState(0.0000);
   
-  useEffect(()=>{
+  useEffect(()=>{   
     const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
     setSubtotal(subtotal1)
     setAddingSummary(subtotal1)
   })
+
+  
+
+
+
 
   return (
     <div className="container mx-auto" id='addingTable'>
