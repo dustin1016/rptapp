@@ -18,13 +18,15 @@ import CollectionByAccounts from './widgets/CollectionByAccounts';
 import AddTable from './widgets/AddTable';
 import ChangeTable from './widgets/ChangeTable';
 import DropTable from './widgets/DropTable';
-
+import AssessmentsTable from './widgets/AssessmentsTable';
 const formatDate = (dateString) => {
   //returns 2024-01-01 as Jan. 1, 2024
+  const timeOptions = { timeStyle: 'short', hour12: true};
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   const formattedString = new Date(dateString).toLocaleDateString('en-US', options);
-
-  return formattedString;
+  const dateTimeStr = new Date();
+  const formattedTime = new Date(dateTimeStr).toLocaleTimeString('en-US', timeOptions);
+  return formattedString + ' ' + formattedTime;
 };
 
 
@@ -362,7 +364,7 @@ const handlePrint = () => {
     printWindow.document.close();
     setTimeout(() => {
       printWindow.print();
-    }, 200);
+    }, 500);
   } else {
     console.error('Failed to open print window');
   }
@@ -448,7 +450,8 @@ const handlePrint = () => {
                 </div>
                 }
           <div id='printable' className='breaks' ref={printableRef} >
-            {(hasData && clickCount > 0) && 
+            
+            {hasData && 
             <>
             <p className='text-sm font-semibold'>PALAWAN STATE UNIVERSITY</p>
             <p className='text-sm font-semibold uppercase'>Accounts Receivable daily transaction log</p>
@@ -484,7 +487,8 @@ const handlePrint = () => {
 
             {assessmentTransactions.length > 0 && 
             <div className='mb-6'>
-              <AssessmentTable collections={assessmentTransactions} setAssessmentSummary={setAssessmentSummary} />
+              {/* <AssessmentTable collections={assessmentTransactions} setAssessmentSummary={setAssessmentSummary} /> */}
+              <AssessmentsTable collections={assessmentTransactions} setAssessmentSummary={setAssessmentSummary} />
             </div>
             }
 

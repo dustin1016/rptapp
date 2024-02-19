@@ -12,6 +12,7 @@ const CollectionsTable = ({ collections, setCashierSummary }) => {
 
   return (
     <div className="container mx-auto" id='collectionsTable'>
+
      <h1 className='text-md font-semibold my-3'>Cashier Collections</h1>
       <table className="bg-white border-collapse border border-slate-400 mb-6 text-xs">
         <thead>

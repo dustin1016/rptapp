@@ -1,23 +1,45 @@
 import React, {useState, useEffect} from 'react';
 import { formatAmount, formatTime } from './tableHelpers'; 
-const AssessmentTable = ({ collections, setAssessmentSummary }) => {
+import colleges from '../../data/college';
+const AssessmentsTable = ({ collections, setAssessmentSummary }) => {
   // Calculate subtotal
-    const [subtotal, setSubtotal] = useState(0.0000);
-    const [totalOriginalBalance, setTotalOriginalBalance] = useState(0.0000)
+  const [groupedCollections, setGroupedCollections] = useState({});
   useEffect(()=>{
-    const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
-    setSubtotal(subtotal1)
 
-    const totalOriginal = collections.reduce((acc, curr) => acc + parseFloat(curr.originalBalance), 0).toFixed(4);
-    setTotalOriginalBalance(totalOriginal);
+
+     // Group collections by collegeid
+     const groupedByCollege = collections.reduce((acc, curr) => {
+        const collegeId = curr.collegeid;
+  
+        if (!acc[collegeId]) {
+          acc[collegeId] = [];
+        }
+  
+        acc[collegeId].push(curr);
+        return acc;
+      }, {});
+  
+      setGroupedCollections(groupedByCollege);
   
 
+
+
+    const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
+    // setSubtotal(subtotal1)
     setAssessmentSummary(subtotal1)
+
+    // const totalOriginal = collections.reduce((acc, curr) => acc + parseFloat(curr.originalBalance), 0).toFixed(4);
+    // setTotalOriginalBalance(totalOriginal);
+  
+
   },[])
 
   return (
     <div className="container mx-auto" id='assessmentTable'>
      <h1 className='text-md font-semibold my-3'>Assessment</h1>
+     {Object.keys(groupedCollections).map((collegeId) => (
+        <div key={collegeId} className='ml-6'>
+        <h2 className="text-sm font-semibold my-3">{colleges.find(x=>x.collegeid === parseInt(collegeId))?.collegeName}</h2>
       <table className="bg-white border-collapse border border-slate-400 mb-6 text-xs">
         <thead>
           <tr>
@@ -30,7 +52,7 @@ const AssessmentTable = ({ collections, setAssessmentSummary }) => {
           </tr>
         </thead>
         <tbody>
-          {collections.map((item, index) => (
+          {groupedCollections[collegeId].map((item, index) => (
             <tr key={index}>
               <td className="py-2 px-4 border border-black/35">{formatTime(item.Time)}</td>
               <td className="py-2 px-4 border border-black/35">
@@ -47,16 +69,17 @@ const AssessmentTable = ({ collections, setAssessmentSummary }) => {
           <tr>
             
             <td colSpan={2} className="py-2 px-4 border border-black/35 font-semibold text-end">Subtotal:</td>
-            <td  className="py-2 px-4 border border-black/35 font-semibold text-end">{formatAmount(totalOriginalBalance)}</td>
-            <td  className="py-2 px-4 border border-black/35 font-semibold text-end">{formatAmount(subtotal)}</td>
+            <td  className="py-2 px-4 border border-black/35 font-semibold text-end">{formatAmount(groupedCollections[collegeId].reduce((acc, curr) => acc + parseFloat(curr.originalBalance), 0).toFixed(4))}</td>
+            <td  className="py-2 px-4 border border-black/35 font-semibold text-end">{formatAmount(groupedCollections[collegeId].reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4))}</td>
             <td className=""></td>
             <td className=""></td>
           </tr>
         </tfoot>
       </table>
-     
+      </div>
+      ))}
     </div>
   );
 };
 
-export default AssessmentTable;
+export default AssessmentsTable;
