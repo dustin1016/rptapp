@@ -19,6 +19,9 @@ import AddTable from './widgets/AddTable';
 import ChangeTable from './widgets/ChangeTable';
 import DropTable from './widgets/DropTable';
 import AssessmentsTable from './widgets/AssessmentsTable';
+import TermDropdown from './widgets/TermDropdown';
+
+
 const formatDate = (dateString) => {
   //returns 2024-01-01 as Jan. 1, 2024
   const timeOptions = { timeStyle: 'short', hour12: true};
@@ -35,7 +38,7 @@ const TransactionLogs = () => {
   const [isFetching, setIsFetching]= useState(false);
   const [hasData, setHasData] = useState(false);
   const [clickCount, setClickCount] = useState(0);
-  
+  const [termId, setTermId] = useState(null);
   //array states for cashier collections
   const [cashierSummary, setCashierSummary] = useState(0.00);
   const [cashierCollections, setCashierCollections] = useState([]);
@@ -260,8 +263,10 @@ const fetchSpecialClassTransactions = async () => {
 
 //method to fetch grant and aid debit/credit transactions
 const fetchAssessmentTransactions = async () => {
+  const tParam = termId === null ? '' : `&t=${termId}`
+  const url = `http://10.125.0.222:8080/rptApi/index.php/assessmentTransactions?formattedDate=${formattedDate}${tParam}`
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/assessmentTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(url); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
@@ -380,7 +385,9 @@ const handlePrint = () => {
             <h1 className='text-2xl mb-4 npr'>Daily Transactions Log</h1>
             <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
             
-           
+           <div className='my-4'>
+            <TermDropdown setTermId={setTermId} />
+           </div>
             <button className={`bg-transparent
             hover:bg-blue-500 mt-4 w-full
               text-blue-700 font-semibold 

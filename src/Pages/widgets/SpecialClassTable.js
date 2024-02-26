@@ -8,7 +8,7 @@ const SpecialClassTable = ({ collections, setSpecialClassSummary }) => {
     const subtotal1 = collections.reduce((acc, curr) => acc + parseFloat(curr.amount), 0).toFixed(4);
     setSubtotal(subtotal1)
     setSpecialClassSummary(subtotal1)
-    console.log(collections)
+  
   })
 
   return (
