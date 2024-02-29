@@ -21,7 +21,7 @@ import {
   return formattedString;
 };
 
-const ArTable = ({formattedDate, studentData, isDetailed}) =>{
+const ArTable = ({formattedDate, studentData, isDetailed, isHeadPc}) =>{
 
 
 
@@ -226,7 +226,7 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
            <IoMdPrint className='text-6xl' />
            <p className='text-xs'>PRINT</p>
           </button>
-          <DownloadTableExcel
+        {isHeadPc &&   <DownloadTableExcel
                     filename={`Accounts Receivable as of ${formatDate(formattedDate)}`}
                     sheet="Accounts"
                     currentTableRef={printableRef.current}
@@ -236,7 +236,7 @@ const ArTable = ({formattedDate, studentData, isDetailed}) =>{
                    <FaFileExcel className='text-6xl' />
                    <p className='text-xs'>Export Excel</p></button>
 
-                </DownloadTableExcel>
+                </DownloadTableExcel>}
           </div>
           
           <div id="printableArea" ref={printableRef}>

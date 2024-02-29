@@ -33,12 +33,17 @@ const formatDate = (dateString) => {
 };
 
 
-const TransactionLogs = () => {
+
+const TransactionLogs = ({isHeadPc}) => {
   const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [isFetching, setIsFetching]= useState(false);
   const [hasData, setHasData] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const [termId, setTermId] = useState(null);
+ 
+
+
+
   //array states for cashier collections
   const [cashierSummary, setCashierSummary] = useState(0.00);
   const [cashierCollections, setCashierCollections] = useState([]);
@@ -154,6 +159,7 @@ const TransactionLogs = () => {
 
   useEffect(() => {
     document.title = 'Daily Transactions Log';
+   
   }, []);
 
   useEffect(()=>{
@@ -197,6 +203,9 @@ const TransactionLogs = () => {
       console.error('Error fetching data:', error);
     }
   }
+
+
+
 
 
 //method to fetch cashier data
@@ -442,7 +451,7 @@ const handlePrint = () => {
               <p className='text-sm'>PRINT</p>
               </button>
 
-              <DownloadTableExcel
+             {isHeadPc &&  <DownloadTableExcel
                     filename={`Daily Transaction Logs - ${formatDate(formattedDate)}`}
                     sheet="Transactions"
                     currentTableRef={printableRef.current}
@@ -452,7 +461,7 @@ const handlePrint = () => {
                    <FaFileExcel className='text-6xl' />
                    <p className='text-xs'>Export Excel</p></button>
 
-                </DownloadTableExcel>
+                </DownloadTableExcel>}
 
                 </div>
                 }

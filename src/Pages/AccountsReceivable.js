@@ -5,7 +5,7 @@ import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
 
 // import LoadingIcons from 'react-loading-icons'
-const AccountsReceivable = () => {
+const AccountsReceivable = ({isHeadPc}) => {
   const [hasData, setHasData] = useState(false);
   const [isFetching, setIsFetching]= useState(false);
   const [studentData, setStudentData] = useState([]);
@@ -151,7 +151,7 @@ const AccountsReceivable = () => {
           </div>
         <div className='flex-grow h-screen p-2 overflow-y-scroll'>
         {/* <DataComponent /> */}
-          {hasData && <ArTable formattedDate={formattedDate} studentData={studentData} isDetailed={isDetailed}  />
+          {hasData && <ArTable formattedDate={formattedDate} studentData={studentData} isDetailed={isDetailed} isHeadPc={isHeadPc}  />
        
         }
         
