@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Sidebar from "./Sidebar";
 import AccountsReceivable from "./Pages/AccountsReceivable";
+import DocStamp from "./Pages/DocStamp";
 import TransactionLogs from "./Pages/TransactionLogs";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { BsArrowLeft } from "react-icons/bs";
@@ -37,11 +38,14 @@ function App() {
   return (
     <Router>
       <div className="flex">
-        <Sidebar setIsMenuHovered={setIsMenuHovered}/>
+        <Sidebar setIsMenuHovered={setIsMenuHovered} isHeadPc={isHeadPc}/>
         <div className={`${isMenuHovered ? 'pl-44' : 'pl-16'} rm-padding`}>
           <Routes>
-            <Route path="/accounts-receivable" element={<AccountsReceivable isHeadPc={isHeadPc} />} />
-            <Route path="/transaction-logs" element={<TransactionLogs isHeadPc={isHeadPc} />} />
+          
+              <Route path="/accounts-receivable" element={<AccountsReceivable isHeadPc={isHeadPc} />} />
+              <Route path="/transaction-logs" element={<TransactionLogs isHeadPc={isHeadPc} />} />
+         
+            <Route path="/docstamp" element={<DocStamp isHeadPc={isHeadPc} />} />
             {/* Add more routes as needed */}
             <Route path="*" element={
            <Home />
