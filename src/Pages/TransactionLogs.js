@@ -443,7 +443,6 @@ const handlePrint = () => {
               {hasData &&
               
               <div className='npr flex flex-col fixed top-5 right-4 h-4'>
-
                 <button className="bg-blue-500 hover:bg-blue-700 w-24 mb-6 text-center text-white font-semibold py-2 px-4 rounded"
               onClick={()=>handlePrint()}
               >
