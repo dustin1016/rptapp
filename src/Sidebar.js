@@ -31,11 +31,11 @@ const Sidebar = ({setIsMenuHovered, isHeadPc}) => {
       <p className="mb-4 text-2xl">Menu</p>
       <div className="flex flex-col text-center">
       {menuItems.map((menuItem, index) => (
-        menuItem.isHeadPc === isHeadPc && 
+        // menuItem.isHeadPc === isHeadPc && 
         <Link key={index} to={menuItem.path} className="text-white text-sm hover:bg-gray-700 hover:border-gray-500 hover:border-2 hover:rounded-sm flex flex-col items-center py-2 px-3 cursor-pointer mb-4">
-        {menuItem.icon}
-        <span>{menuItem.item}</span>
-      </Link>
+          {menuItem.icon}
+          <span>{menuItem.item}</span>
+        </Link>
       ))}
       </div>
     </div>
