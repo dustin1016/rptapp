@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, Component} from "react";
 import { FcInfo } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
 const TermDropdown = ({setTermId}) => {
@@ -6,6 +6,8 @@ const TermDropdown = ({setTermId}) => {
   const [options, setOptions] = useState([]);
   const [isDropdownVisible, setDropdownVisibility] = useState(false);
   const [toolTipVisible, setToolTipVisible] = useState(false)
+  
+
   useEffect(()=>{
     const fetchTermList = async () => {
         try {
@@ -19,6 +21,7 @@ const TermDropdown = ({setTermId}) => {
           console.log('Error fetching data: ' + error.message); // Set error message to state
         }
       };
+    
       fetchTermList();
   }, [])
 
@@ -37,8 +40,10 @@ const TermDropdown = ({setTermId}) => {
   }
 
   useEffect(()=>{
+
     if (isDropdownVisible === false) {
         setTermId(null)
+        setSelectedId(null)
     }
   }, [isDropdownVisible])
 

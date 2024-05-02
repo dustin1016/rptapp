@@ -5,10 +5,10 @@ import CollectionsTable from './widgets/CollectionsTable';
 import GrantAidTable from './widgets/GrantAidTable';
 import ScholarshipTable from './widgets/ScholarshipTable';
 import SpecialClassTable from './widgets/SpecialClassTable';
-import AssessmentTable from './widgets/AssessmentTable';
-import AddingTable from './widgets/AddingTable';
-import ChangingTable from './widgets/ChangingTable';
-import DroppingTable from './widgets/DroppingTable';
+// import AssessmentTable from './widgets/AssessmentTable';
+// import AddingTable from './widgets/AddingTable';
+// import ChangingTable from './widgets/ChangingTable';
+// import DroppingTable from './widgets/DroppingTable';
 import TableNav from './widgets/TableNav';
 import TransactionLogSummary from './widgets/TransactionLogSummary';
 import { IoMdPrint } from "react-icons/io";
@@ -20,7 +20,8 @@ import ChangeTable from './widgets/ChangeTable';
 import DropTable from './widgets/DropTable';
 import AssessmentsTable from './widgets/AssessmentsTable';
 import TermDropdown from './widgets/TermDropdown';
-
+import { FcInfo } from "react-icons/fc";
+import { MdClose } from "react-icons/md";
 
 const formatDate = (dateString) => {
   //returns 2024-01-01 as Jan. 1, 2024
@@ -41,8 +42,12 @@ const TransactionLogs = ({isHeadPc}) => {
   const [clickCount, setClickCount] = useState(0);
   const [termId, setTermId] = useState(null);
  
+  //termdropdown states
+  // const [isDropdownVisible, setDropdownVisibility] = useState(false);
+  // const [toolTipVisible, setToolTipVisible] = useState(false)
+  // const [options, setOptions] = useState([]); //list of terms
 
-
+  
 
   //array states for cashier collections
   const [cashierSummary, setCashierSummary] = useState(0.00);
@@ -150,11 +155,12 @@ const TransactionLogs = ({isHeadPc}) => {
     setAccountCollections([])
     setHasData(false)
     setClickCount(0)
- 
+    // setTermId(null)
   }
 
   useEffect(()=>{
     clearData();
+    console.log(termId)
   }, [formattedDate])
 
   useEffect(() => {
