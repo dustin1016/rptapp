@@ -145,7 +145,8 @@ return (
               <p className='text-sm'>PRINT</p>
               </button>
 
-             {isHeadPc &&  <DownloadTableExcel
+             {isHeadPc && 
+               <DownloadTableExcel
                     filename={`Documentary Stamp Tax Remittance - ${formatDate(formattedDate)}`}
                     sheet="Remittances"
                     currentTableRef={printableRef.current}
@@ -155,19 +156,25 @@ return (
                    <FaFileExcel className='text-6xl' />
                    <p className='text-xs'>Export Excel</p></button>
 
-                </DownloadTableExcel>}
+                </DownloadTableExcel>
+                }
+
+             
 
                 </div>
                 }
 
-            {hasData &&
             <div id='printable' className='breaks' ref={printableRef}>
+            {hasData &&
+            <>
+        
              <p className='text-md text-center font-semibold'>PALAWAN STATE UNIVERSITY</p>
             <p className='text-sm text-center font-semibold uppercase'>Documentary stamp tax remittance</p>
             <p className='text-sm text-center font-semibold'>As Of: {formatDate(formattedDate)}</p>
                 <DstTable data={dstData} />
-            </div>
-            }
+                </>
+              }
+              </div>
             </div>       
         </div>
        

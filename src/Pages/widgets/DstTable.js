@@ -52,7 +52,9 @@ const DstTable = ({data}) => {
                           <>
                             <td rowSpan={group.length} className="py-2 px-4 whitespace-nowrap border border-black/35 text-xs text-gray-900">{formatDate(item.TransDate)}</td>
                             <td rowSpan={group.length} className="py-2 px-4 whitespace-nowrap border border-black/35 text-xs text-gray-900">{item.ReferenceNo}</td>
-                            <td rowSpan={group.length} className="py-2 px-4 whitespace-nowrap border border-black/35 text-xs text-gray-900">{item.control_number}</td>
+                            <td rowSpan={group.length} className="py-2 px-4 whitespace-nowrap border border-black/35 text-xs text-gray-900">
+                              {/* {item.control_number} */}
+                              </td>
                             <td rowSpan={group.length} className="py-2 px-4 whitespace-nowrap border border-black/35 text-xs text-gray-900">{item.Payor}</td>
                           </>
                         )}

@@ -455,8 +455,9 @@ const handlePrint = () => {
               <IoMdPrint className='text-6xl' />
               <p className='text-sm'>PRINT</p>
               </button>
-
-             {isHeadPc &&  <DownloadTableExcel
+            
+             {isHeadPc &&  
+                <DownloadTableExcel
                     filename={`Daily Transaction Logs - ${formatDate(formattedDate)}`}
                     sheet="Transactions"
                     currentTableRef={printableRef.current}
@@ -466,7 +467,8 @@ const handlePrint = () => {
                    <FaFileExcel className='text-6xl' />
                    <p className='text-xs'>Export Excel</p></button>
 
-                </DownloadTableExcel>}
+                </DownloadTableExcel>
+                }
 
                 </div>
                 }
