@@ -9,7 +9,7 @@ const DataComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const response = await fetch('http://10.125.0.222:8080/rptapi/index.php/fetchStudentDataChunks?x=1287');
+          const response = await fetch('http://10.125.2.222:8080/rptapi/index.php/fetchStudentDataChunks?x=1287');
           const reader = response.body.getReader();
           let result = '';
           let parsedData = null;

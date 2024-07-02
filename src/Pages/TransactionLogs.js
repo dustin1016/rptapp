@@ -217,7 +217,7 @@ const TransactionLogs = ({isHeadPc}) => {
 //method to fetch cashier data
   const fetchCashierCollections = async () => {
     try {
-      const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/cashierCollections?formattedDate=${formattedDate}`); // Replace with your API endpoint
+      const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/cashierCollections?formattedDate=${formattedDate}`); // Replace with your API endpoint
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
@@ -233,7 +233,7 @@ const TransactionLogs = ({isHeadPc}) => {
 //method to fetch scholarship Debit/Credit Memo transactions
 const fetchSchoTransactions = async () => {
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/scholarshipTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/scholarshipTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
@@ -248,7 +248,7 @@ const fetchSchoTransactions = async () => {
 //method to fetch grant and aid debit/credit transactions
 const fetchGrantAidTransactions = async () => {
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/grantAidTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/grantAidTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
@@ -264,7 +264,7 @@ const fetchGrantAidTransactions = async () => {
 //method to fetch grant and aid debit/credit transactions
 const fetchSpecialClassTransactions = async () => {
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/specialClassTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/specialClassTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
@@ -279,7 +279,7 @@ const fetchSpecialClassTransactions = async () => {
 //method to fetch grant and aid debit/credit transactions
 const fetchAssessmentTransactions = async () => {
   const tParam = termId === null ? '' : `&t=${termId}`
-  const url = `http://10.125.0.222:8080/rptApi/index.php/assessmentTransactions?formattedDate=${formattedDate}${tParam}`
+  const url = `http://10.125.2.222:8080/rptApi/index.php/assessmentTransactions?formattedDate=${formattedDate}${tParam}`
   try {
     const response = await fetch(url); // Replace with your API endpoint
     if (!response.ok) {
@@ -296,7 +296,7 @@ const fetchAssessmentTransactions = async () => {
 
 const fetchAddingTransactions = async () => {
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/addingTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/addingTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
@@ -310,7 +310,7 @@ const fetchAddingTransactions = async () => {
 
 const fetchChangingTransactions = async () => {
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/changingTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/changingTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
@@ -325,7 +325,7 @@ const fetchChangingTransactions = async () => {
 
 const fetchDroppingTransactions = async () => {
   try {
-    const response = await fetch(`http://10.125.0.222:8080/rptApi/index.php/droppingTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
+    const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/droppingTransactions?formattedDate=${formattedDate}`); // Replace with your API endpoint
     if (!response.ok) {
       throw new Error('Network response was not ok.');
     }
