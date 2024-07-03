@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import AccountsReceivable from "./Pages/AccountsReceivable";
 import DocStamp from "./Pages/DocStamp";
 import TransactionLogs from "./Pages/TransactionLogs";
+import Soa from "./Soa";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { BsArrowLeft } from "react-icons/bs";
 import Home from "./Pages/Home";
@@ -43,9 +44,10 @@ function App() {
           <Routes>
           
               <Route path="/accounts-receivable" element={<AccountsReceivable isHeadPc={isHeadPc} />} />
+              <Route path="/soa" element={<Soa isHeadPc={isHeadPc} />} />
               <Route path="/transaction-logs" element={<TransactionLogs isHeadPc={isHeadPc} />} />
          
-            <Route path="/docstamp" element={<DocStamp isHeadPc={isHeadPc} />} />
+              <Route path="/docstamp" element={<DocStamp isHeadPc={isHeadPc} />} />
             {/* Add more routes as needed */}
             <Route path="*" element={
            <Home />

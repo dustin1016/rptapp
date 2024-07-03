@@ -97,7 +97,7 @@ return (
     
         <div className='flex flex-row w-full'>
             <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
-                <h1 className='text-2xl mb-4 npr'>DST Reporting/Monitoring</h1>
+                <h1 className='text-xl mb-4 npr'>DST Reporting/Monitoring</h1>
                 <Datepicker setFormattedDate={setFormattedDate} label={'Select As Of Date'} />
                 
             

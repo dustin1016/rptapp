@@ -3,10 +3,12 @@ import { GiMoneyStack } from 'react-icons/gi';
 import { GrTransaction } from 'react-icons/gr';
 import { Link } from 'react-router-dom';
 import { GiPostStamp } from "react-icons/gi";
+import { BiReceipt } from "react-icons/bi";
 const Sidebar = ({setIsMenuHovered, isHeadPc}) => {
   const [isHovered, setIsHovered] = useState(false);
   const menuItems = [
     { path: '/accounts-receivable', item: 'Accounts Receivable', isHeadPc:true, icon: <GiMoneyStack className="w-10 h-10" /> },
+    { path: '/soa', item: 'SOA', isHeadPc:true, icon: <BiReceipt className="w-10 h-10" /> },
     { path: '/transaction-logs', item: 'Transaction Logs',isHeadPc:true, icon: <GrTransaction className="w-10 h-10" /> },
     { path: '/docstamp', item: 'Documentary Stamp Tax',isHeadPc:false, icon: <GiPostStamp className="w-10 h-10" /> },
   ];
