@@ -47,7 +47,7 @@ const AccountsReceivable = ({isHeadPc}) => {
 
 
       const fetchData = async () => {
-        console.log(isFetching);
+     
         setHasData(false);
         setStudentData([]);
         setIsFetching(true);
@@ -59,7 +59,8 @@ const AccountsReceivable = ({isHeadPc}) => {
           // const strChunk = JSON.stringify(event.data);
           const newChunk = JSON.parse(event.data);
           const record = newChunk.data;
-
+          console.log(record);
+          return;
           setProgressPercentage(record.progress);
           setStudProgress(record.name);
           const accounts = record.accounts.map((item)=>({

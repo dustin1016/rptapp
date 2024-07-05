@@ -25,19 +25,54 @@ const Soa = ({isHeadPc}) => {
 
 
     const generateData = async () => {
-        setIsFetching(true);
-        return;
-        try {
-          const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/cashierCollections?formattedDate=${formattedDate}`); // Replace with your API endpoint
-          if (!response.ok) {
-            throw new Error('Network response was not ok.');
-          }
-          const result = await response.json();
+     setIsFetching(true);
+      
+            const eventSource = new EventSource(`http://10.125.2.222:8080/rptApi/index.php/soa?termid=${termId}`); // Replace with your API endpoint
+            eventSource.onmessage = (event) => {
+                // const strChunk = JSON.stringify(event.data);
+                const newChunk = JSON.parse(event.data);
+                const record = newChunk.data;
+                console.log(record);
+                return;
+                // setProgressPercentage(record.progress);
+                // setStudProgress(record.name);
+                // const accounts = record.accounts.map((item)=>({
+                //   acctDate: item.regdate,
+                //   balance: item.balance
+                // }));
+                // const studentRecord = {
+                //   studentno: record.student_number,
+                //   name: record.name,
+                //   collegeid: parseInt(record.collegeid),
+                //   accounts:accounts
+                // };
+      
+              
+                // const accounts = record.accounts;
+               
+                
+                // console.log(newChunk);
+                // Update the state to include the new chunk of data
+                // setStudentData((prevData) => [...prevData, studentRecord]);
+           
+              };
           
-          setSoaData(result.data);
-        } catch (error) {
-          console.log('Error fetching data: ' + error.message); // Set error message to state
-        }
+              eventSource.onerror = (error) => {
+                
+                console.log('Fetching has finished');
+                console.timeEnd();
+                setIsFetching(false);
+                eventSource.close(); // Close the connection in case of an error
+                setHasData(true);
+              };
+          
+              // Cleanup when the component unmounts
+              return () => {
+                eventSource.close();
+                setIsFetching(false);
+                setHasData(true);
+              };
+      
       };
     return(
         <>
