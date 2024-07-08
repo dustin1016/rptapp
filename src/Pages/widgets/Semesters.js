@@ -1,7 +1,7 @@
 import React, {useState, useEffect, Component} from "react";
 import { FcInfo } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
-const Semesters = ({setTermId}) => {
+const Semesters = ({setTermId, setTermName}) => {
   const [selectedId, setSelectedId] = useState(null);
   const [options, setOptions] = useState([]);
   const [isDropdownVisible, setDropdownVisibility] = useState(false);
@@ -29,6 +29,7 @@ const Semesters = ({setTermId}) => {
     const selectedOption = options.find((option) => option.termid === e.target.value);
     setSelectedId(selectedOption ? selectedOption.termid : null);
     setTermId(selectedOption.termid);
+    setTermName(selectedOption.term);
   };
 
   const handleToggleDropdown = () => {

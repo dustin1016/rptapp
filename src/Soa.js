@@ -2,6 +2,7 @@ import Semesters from './Pages/widgets/Semesters';
 import React, {useEffect, useState, useRef} from 'react';
 import { format } from 'date-fns';
 import colleges from './data/college';
+import SoaTable from './Pages/widgets/SoaTable';
 const formatDate = (dateString) => {
     //returns 2024-01-01 as Jan. 1, 2024
     const timeOptions = { timeStyle: 'short', hour12: true};
@@ -14,14 +15,17 @@ const formatDate = (dateString) => {
 const Soa = ({isHeadPc}) => {
     const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [termId, setTermId] = useState(null);
+    const [termName, setTermName] = useState("");
     const [hasData, setHasData] = useState(false);
     const [isFetching, setIsFetching]= useState(false);
     const [clickCount, setClickCount] = useState(0);
     const printableRef = useRef(null);
     const [soaData, setSoaData] = useState([]);
+    const [progressPercentage, setProgressPercentage] = useState(0);
+
     useEffect(()=>{
-        console.log(termId)
-    }, [termId])
+        document.title = 'Statement Of Accounts';
+    }, [])
 
 
     const generateData = async () => {
@@ -33,7 +37,7 @@ const Soa = ({isHeadPc}) => {
                 const newChunk = JSON.parse(event.data);
                 const record = newChunk.data;
                 console.log(record);
-                return;
+              
                 // setProgressPercentage(record.progress);
                 // setStudProgress(record.name);
                 // const accounts = record.accounts.map((item)=>({
@@ -53,14 +57,14 @@ const Soa = ({isHeadPc}) => {
                 
                 // console.log(newChunk);
                 // Update the state to include the new chunk of data
-                // setStudentData((prevData) => [...prevData, studentRecord]);
+                setSoaData((prevData) => [...prevData, record]);
            
               };
           
               eventSource.onerror = (error) => {
                 
                 console.log('Fetching has finished');
-                console.timeEnd();
+                // console.timeEnd();
                 setIsFetching(false);
                 eventSource.close(); // Close the connection in case of an error
                 setHasData(true);
@@ -82,8 +86,8 @@ const Soa = ({isHeadPc}) => {
                 <div className='flex flex-row w-full'>
                     <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
                         <h1 className='text-xl mb-4 npr'>Statement Of Account</h1>
-                    
-                        <Semesters setTermId={setTermId} />
+                        
+                        <Semesters setTermId={setTermId} setTermName={setTermName} />
 
                         
                         <button className={`bg-transparent
@@ -125,8 +129,11 @@ const Soa = ({isHeadPc}) => {
                     {hasData &&
                     <>
                         <p className='text-md text-center font-semibold'>PALAWAN STATE UNIVERSITY</p>
-                        <p className='text-sm text-center font-semibold uppercase'>Documentary stamp tax remittance</p>
-                        <p className='text-sm text-center font-semibold'>As Of: {formatDate(formattedDate)}</p>      
+                        <p className='text-sm text-center font-semibold uppercase'>Statement of Account</p>
+                        <p className='text-sm text-center font-semibold'>For the Term: {termName}</p>      
+                        <p className='text-sm text-center font-semibold'>As Of: {formatDate(formattedDate)}</p>
+
+                        <SoaTable data={soaData} />      
                     </>
                     }
                     </div>
