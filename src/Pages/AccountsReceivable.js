@@ -150,10 +150,10 @@ const AccountsReceivable = ({isHeadPc}) => {
               <ToggleView />
           </div>
         <div className='flex-grow h-screen p-2 overflow-y-scroll'>
-        {/* <DataComponent /> */}
-          {hasData && <ArTable formattedDate={formattedDate} studentData={studentData} isDetailed={isDetailed} isHeadPc={isHeadPc}  />
-       
-        }
+          {/* <DataComponent /> */}
+            {hasData && <ArTable formattedDate={formattedDate} studentData={studentData} isDetailed={isDetailed} isHeadPc={isHeadPc}  />
+        
+          }
         
         </div>
       </div>

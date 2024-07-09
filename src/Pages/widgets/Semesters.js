@@ -1,7 +1,7 @@
 import React, {useState, useEffect, Component} from "react";
 import { FcInfo } from "react-icons/fc";
 import { MdClose } from "react-icons/md";
-const Semesters = ({setTermId, setTermName}) => {
+const Semesters = ({setTermId, setTermName, isFetching}) => {
   const [selectedId, setSelectedId] = useState(null);
   const [options, setOptions] = useState([]);
   const [isDropdownVisible, setDropdownVisibility] = useState(false);
@@ -32,13 +32,7 @@ const Semesters = ({setTermId, setTermName}) => {
     setTermName(selectedOption.term);
   };
 
-  const handleToggleDropdown = () => {
-    setDropdownVisibility(!isDropdownVisible);
-  };
 
-  const handleToolTipClick = () => {
-    setToolTipVisible(!toolTipVisible)
-  }
 
   useEffect(()=>{
 
@@ -60,6 +54,7 @@ const Semesters = ({setTermId, setTermName}) => {
  
           {options.length > 0 ? 
             <select
+            disabled={isFetching}
             id="term"
             name="term"
             value={selectedId || ''}

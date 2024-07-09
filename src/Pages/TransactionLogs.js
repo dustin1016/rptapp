@@ -543,7 +543,6 @@ const handlePrint = () => {
             </div>
             }
 
-
              
                   {hasData ?  <div className='mb-6'>
                       <TransactionLogSummary 

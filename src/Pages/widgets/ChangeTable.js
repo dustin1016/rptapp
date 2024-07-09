@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { formatAmount, formatTime } from './tableHelpers';
 import colleges from '../../data/college';
 const ChangeTable = ({ collections, setChangingSummary }) => {
+  
   // State to store grouped collections
   const [groupedCollections, setGroupedCollections] = useState({});
 

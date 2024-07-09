@@ -27,16 +27,37 @@ const Soa = ({isHeadPc}) => {
         document.title = 'Statement Of Accounts';
     }, [])
 
+    const clearData = () => {
+        setSoaData([]);
+        setHasData(false);
+        setProgressPercentage(0);
+    }
 
+    useEffect(()=>{
+        
+
+        // const confirmed = window.confirm(`Are you sure you want to change to ${colleges.find(college => college.collegeid === newCollegeId)?.collegeName}?`);
+        if (termId && hasData){
+            const confirmed = window.confirm(`Changing the semester will require you to re-generate the data, this will take a while. are you sure?`);
+
+            if (confirmed) {
+                clearData();
+              } else {
+                // Revert selection if not confirmed
+                return;
+              }
+        }
+    }, [termId])
     const generateData = async () => {
-     setIsFetching(true);
+        clearData();
+        setIsFetching(true);
       
             const eventSource = new EventSource(`http://10.125.2.222:8080/rptApi/index.php/soa?termid=${termId}`); // Replace with your API endpoint
             eventSource.onmessage = (event) => {
                 // const strChunk = JSON.stringify(event.data);
                 const newChunk = JSON.parse(event.data);
                 const record = newChunk.data;
-                console.log(record);
+              
               
                 // setProgressPercentage(record.progress);
                 // setStudProgress(record.name);
@@ -57,6 +78,7 @@ const Soa = ({isHeadPc}) => {
                 
                 // console.log(newChunk);
                 // Update the state to include the new chunk of data
+                setProgressPercentage(record.progress);
                 setSoaData((prevData) => [...prevData, record]);
            
               };
@@ -87,7 +109,7 @@ const Soa = ({isHeadPc}) => {
                     <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
                         <h1 className='text-xl mb-4 npr'>Statement Of Account</h1>
                         
-                        <Semesters setTermId={setTermId} setTermName={setTermName} />
+                        <Semesters setTermId={setTermId} setTermName={setTermName} isFetching={isFetching}/>
 
                         
                         <button className={`bg-transparent
@@ -113,7 +135,7 @@ const Soa = ({isHeadPc}) => {
                                     'Generate'
                                     }
                         </button>
-
+                        {isFetching && <p className={`text-md font-medium text-center ${progressPercentage === 100 && 'text-green-600' }`}>Fetching Progress: {progressPercentage}%</p>}
                     </div>
                     {/* End Contextual SideMenu */}
                     
@@ -125,15 +147,12 @@ const Soa = ({isHeadPc}) => {
                     </>
                         }
 
-                    <div id='printable' className='breaks' ref={printableRef}>
+                    <div >
                     {hasData &&
                     <>
-                        <p className='text-md text-center font-semibold'>PALAWAN STATE UNIVERSITY</p>
-                        <p className='text-sm text-center font-semibold uppercase'>Statement of Account</p>
-                        <p className='text-sm text-center font-semibold'>For the Term: {termName}</p>      
-                        <p className='text-sm text-center font-semibold'>As Of: {formatDate(formattedDate)}</p>
+                      
 
-                        <SoaTable data={soaData} />      
+                        <SoaTable data={soaData} isHeadPc={isHeadPc} termName={termName} />      
                     </>
                     }
                     </div>
