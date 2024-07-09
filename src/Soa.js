@@ -109,7 +109,7 @@ const Soa = ({isHeadPc}) => {
                     <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
                         <h1 className='text-xl mb-4 npr'>Statement Of Account</h1>
                         
-                        <Semesters setTermId={setTermId} setTermName={setTermName} isFetching={isFetching}/>
+                        <Semesters setTermId={setTermId} setTermName={setTermName} isFetching={isFetching} />
 
                         
                         <button className={`bg-transparent
@@ -152,7 +152,7 @@ const Soa = ({isHeadPc}) => {
                     <>
                       
 
-                        <SoaTable data={soaData} isHeadPc={isHeadPc} termName={termName} />      
+                        <SoaTable data={soaData} isHeadPc={isHeadPc} termName={termName} termId={termId} />      
                     </>
                     }
                     </div>

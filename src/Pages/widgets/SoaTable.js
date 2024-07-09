@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import colleges from '../../data/college';
 import { formatCurrency } from './tableHelpers';
 import { IoMdPrint } from "react-icons/io";
@@ -14,8 +14,8 @@ const formatDate = (dateString) => {
   };
 
 
-const SoaTable = ({data, isHeadPc, termName}) => {
-    const [selectedCollegeId, setSelectedCollegeId] = useState('');
+const SoaTable = ({data, isHeadPc, termName, termId}) => {
+    const [selectedCollegeId, setSelectedCollegeId] = useState('1');
     const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const handleCollegeIdChange = (event) => {
         setSelectedCollegeId(event.target.value);
@@ -32,7 +32,7 @@ const SoaTable = ({data, isHeadPc, termName}) => {
           printWindow.document.write('<link rel="stylesheet" href="/print-styles.css" type="text/css" />');
           printWindow.document.write('</head><body>');
           printWindow.document.write(printableContent);
-          printWindow.document.write('<div class="w-full-flex">');
+          printWindow.document.write('<div class="w-full-flex mt-6">');
           printWindow.document.write('<p class="text-xs font-semibold">Prepared By:</p>');
           printWindow.document.write('<p class="text-xs font-semibold">Approved By:</p>');
           printWindow.document.write('</div>');
@@ -46,64 +46,9 @@ const SoaTable = ({data, isHeadPc, termName}) => {
         }
        };
 
-    const groupByStudentAndTerm = (data) => {
-        const groupedData = {};
     
-        data.forEach(student => {
-            const studentName = student.StudentName;
-            const studentNo = student.studentno;
-            const studentCourse = student.StudentCourse; // Assuming you add studentCourse in data structure
-    
-            if (!groupedData[studentName]) {
-                groupedData[studentName] = {
-                    studentNo,
-                    studentCourse,
-                    terms: [],
-                grandTotal: {
-                    debit: 0,
-                    payments: 0,
-                    discount: 0
-                }
-                };
-            }
-    
-            if (student.registrations && Array.isArray(student.registrations)) {
-                student.registrations.forEach(registration => {
-                    const termid = registration.termid;
-                    if (!groupedData[studentName].terms[termid]) {
-                        groupedData[studentName].terms[termid] = {
-                            AYTerm: registration.AYTerm,
-                            SortOrder: parseInt(registration.SortOrder, 10),
-                            assessment: []
-                        };
-                    }
-                    if (registration.assessment && Array.isArray(registration.assessment)) {
-                        registration.assessment.forEach(assessment => {
-                            groupedData[studentName].terms[termid].assessment.push(assessment);
-
-                             // Update grand total
-                        groupedData[studentName].grandTotal.debit += parseFloat(assessment.Debit) || 0;
-                        groupedData[studentName].grandTotal.payments += parseFloat(assessment.Payments) || 0;
-                        groupedData[studentName].grandTotal.discount += parseFloat(assessment.Discount) || 0;
-                        });
-                    }
-                });
-            }
-        });
-    
-        // Sort terms within each student by SortOrder
-        for (const studentName in groupedData) {
-            groupedData[studentName].terms = Object.values(groupedData[studentName].terms).sort((a, b) => b.SortOrder - a.SortOrder);
-        }
-    
-        return groupedData;
-    };
-
-
-
-    const calculateSubtotals = (assessment) => {
-       
-        const subtotals = assessment.reduce((acc, assessment) => {
+    const calculateSubtotals = (assessments) => {
+        return assessments.reduce((acc, assessment) => {
             const debit = parseFloat(assessment.Debit) || 0;
             const payments = parseFloat(assessment.Payments) || 0;
             const discount = parseFloat(assessment.Discount) || 0;
@@ -114,11 +59,64 @@ const SoaTable = ({data, isHeadPc, termName}) => {
     
             return acc;
         }, { debit: 0, payments: 0, discount: 0 });
-    
-        subtotals.balance = subtotals.debit - subtotals.payments - subtotals.discount;
-    
-        return subtotals;
     };
+    
+
+    const groupByStudentAndTerm = (data) => {
+        const groupedData = {};
+    
+        data.forEach(student => {
+            const studentName = student.StudentName;
+            const studentNo = student.studentno;
+            const studentCourse = student.StudentCourse;
+    
+            if (!groupedData[studentName]) {
+                groupedData[studentName] = {
+                    studentNo,
+                    studentCourse,
+                    latestRegistration: null,
+                    pastAssessments: [],
+                    grandTotal: {
+                        debit: 0,
+                        payments: 0,
+                        discount: 0,
+                        balance: 0
+                    }
+                };
+            }
+    
+            if (student.registrations && Array.isArray(student.registrations)) {
+                student.registrations.forEach(registration => {
+                    const termid = parseInt(registration.termid, 10);
+                    if (!groupedData[studentName].latestRegistration || termid > groupedData[studentName].latestRegistration.termid) {
+                        if (groupedData[studentName].latestRegistration) {
+                            groupedData[studentName].pastAssessments.push(...groupedData[studentName].latestRegistration.assessment);
+                        }
+                        groupedData[studentName].latestRegistration = { ...registration, termid };
+                    } else {
+                        groupedData[studentName].pastAssessments.push(...registration.assessment);
+                    }
+                });
+            }
+    
+            // Calculate grand total
+            const allAssessments = [
+                ...groupedData[studentName].latestRegistration.assessment,
+                ...groupedData[studentName].pastAssessments
+            ];
+    
+            groupedData[studentName].grandTotal = calculateSubtotals(allAssessments);
+    
+            // Calculate balance
+            groupedData[studentName].grandTotal.balance = groupedData[studentName].grandTotal.debit - groupedData[studentName].grandTotal.payments - groupedData[studentName].grandTotal.discount;
+        });
+    
+        return groupedData;
+    };
+
+
+
+
 
 
 
@@ -177,61 +175,96 @@ const SoaTable = ({data, isHeadPc, termName}) => {
 
             <p className='text-md text-center font-semibold'>PALAWAN STATE UNIVERSITY</p>
                         <p className='text-sm text-center font-semibold uppercase'>Statement of Account</p>
+                        <p className='text-sm text-center font-semibold uppercase'>{selectedCollegeId !== '' ? colleges.find(x=>x.collegeid === parseInt(selectedCollegeId)).collegeName : 'All Colleges'}</p>
                         <p className='text-sm text-center font-semibold'>For the Term: {termName}</p>      
                         <p className='text-sm text-center font-semibold'>As Of: {formatDate(formattedDate)}</p>
-            {Object.keys(filteredData).map(studentName => (
-                <div key={studentName} className="mb-8 border-t-2 border-black pt-4">
-                    <h2 className="text-xs font-semibold mb-4">Name: {studentName}</h2>
-                    <h2 className="text-xs font-semibold mb-4">Student No: {filteredData[studentName].studentNo}</h2>
-                    <h2 className="text-xs font-semibold mb-4">Course/Program: {filteredData[studentName].studentCourse}</h2>
-                   
+           
 
-                    {filteredData[studentName].terms.map((term, index) => {
-                        const subtotals = calculateSubtotals(term.assessment);
 
-                        return (
-                            <div key={index} className="mb-6 ml-10">
-                                <h3 className="text-md font-medium mb-2">{term.AYTerm}</h3>
-                                <table className="table-fixed bg-white border-collapse border border-slate-400 text-xs">
-                                    <thead className="bg-gray-100">
-                                        <tr>
-                                            <th className="border border-black/35 px-4 py-2">Account Name</th>
-                                            <th className="border border-black/35 px-4 py-2">Debit</th>
-                                            <th className="border border-black/35 px-4 py-2">Payments</th>
-                                            <th className="border border-black/35 px-4 py-2">Discount</th>
-                                            <th className="border border-black/35 px-4 py-2">Balance</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {term.assessment.map((assessment, idx) => (
-                                            <tr key={idx} className="hover:bg-gray-100">
-                                                <td className="border border-black/35 px-4 py-2">{assessment.AccountName}</td>
-                                                {/* <td className="border border-black/35 px-4 py-2">{parseFloat(assessment.Debit).toFixed(4)}</td> */}
-                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Debit))}</td>
-                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Payments))}</td>
-                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Discount))}</td>
-                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Debit) - parseFloat(assessment.Payments) - parseFloat(assessment.Discount))}</td>
+                {Object.keys(filteredData).map((studentName, index) => (
+                <div key={studentName} className={`mb-8 ${index > 0 && 'pagebreak'} `}>
+                    
+                    
+                    <h2 className="text-xs font-semibold mb-2">Name: {studentName}</h2>
+                    <h2 className="text-xs font-semibold mb-2">Student No: {filteredData[studentName].studentNo}</h2>
+                    <h2 className="text-xs font-semibold mb-2">Course/Program: {filteredData[studentName].studentCourse}</h2>
+                    <div className="mb-6 ml-10">
+                        <h3 className="text-md font-medium mb-2">{filteredData[studentName].latestRegistration.AYTerm}</h3>
+                        <table className="table-fixed bg-white border-collapse border border-slate-400 text-xs">
+                            <thead className="bg-gray-100">
+                                <tr>
+                                    <th className="border border-black/35 px-4 py-2">Account Name</th>
+                                    <th className="border border-black/35 px-4 py-2">Debit</th>
+                                    <th className="border border-black/35 px-4 py-2">Payments</th>
+                                    <th className="border border-black/35 px-4 py-2">Discount</th>
+                                    <th className="border border-black/35 px-4 py-2">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredData[studentName].latestRegistration.assessment.map((assessment, idx) => (
+                                    <tr key={idx} className="hover:bg-gray-100">
+                                        <td className="border border-black/35 px-4 py-2">{assessment.AccountName}</td>
+                                        <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Debit))}</td>
+                                        <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Payments))}</td>
+                                        <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Discount))}</td>
+                                        <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(parseFloat(assessment.Debit) -parseFloat(assessment.Payments) - parseFloat(assessment.Discount))}</td>
+                                    </tr>
+                                ))}
+                                <tr className="bg-gray-200 font-medium">
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>Subtotals</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].latestRegistration.assessment).debit)}</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].latestRegistration.assessment).payments)}</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].latestRegistration.assessment).discount)}</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].latestRegistration.assessment).debit - calculateSubtotals(filteredData[studentName].latestRegistration.assessment).payments - calculateSubtotals(filteredData[studentName].latestRegistration.assessment).discount)}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="mt-6 ml-10">
+                        <h3 className="text-md font-medium mb-2">Past Assessments Summary</h3>
+                        <table className="table-fixed bg-white border-collapse border border-slate-400 text-xs">
+                            <thead className="bg-gray-100">
+                                <tr>
+                                    <th className="border border-black/35 px-4 py-2">Account Name</th>
+                                    <th className="border border-black/35 px-4 py-2">Debit</th>
+                                    <th className="border border-black/35 px-4 py-2">Payments</th>
+                                    <th className="border border-black/35 px-4 py-2">Discount</th>
+                                    <th className="border border-black/35 px-4 py-2">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.keys(filteredData[studentName].pastAssessments.reduce((acc, assessment) => {
+                                    acc[assessment.AccountName] = acc[assessment.AccountName] || [];
+                                    acc[assessment.AccountName].push(assessment);
+                                    return acc;
+                                }, {})).map(accountName => {
+                                    const assessments = filteredData[studentName].pastAssessments.filter(a => a.AccountName === accountName);
+                                    const subtotals = calculateSubtotals(assessments);
+                                    return (
+                                        <React.Fragment key={accountName}>
+                                            <tr className="hover:bg-gray-100">
+                                                <td className="border border-black/35 px-4 py-2">{accountName}</td>
+                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(subtotals.debit)}</td>
+                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(subtotals.payments)}</td>
+                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(subtotals.discount)}</td>
+                                                <td className="border border-black/35 px-4 py-2 text-end">{formatCurrency(subtotals.debit - subtotals.payments - subtotals.discount)}</td>
                                             </tr>
-                                        ))}
-                                        <tr className="bg-gray-200 font-medium">
-                                            <td className="border border-black/35 px-4 py-2 text-end"><strong>Subtotals</strong></td>
-                                            <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(subtotals.debit)}</strong></td>
-                                            <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(subtotals.payments)}</strong></td>
-                                            <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(subtotals.discount)}</strong></td>
-                                            <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(subtotals.balance)}</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-               
-                            </div>
-                        );
-                    })}
-
-                                         {/* Display Grand Total */}
-                        <div className="mt-4 ml-10">
+                                        </React.Fragment>
+                                    );
+                                })}
+                                <tr className="bg-gray-200 font-medium">
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>Subtotals</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].pastAssessments).debit)}</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].pastAssessments).payments)}</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].pastAssessments).discount)}</strong></td>
+                                    <td className="border border-black/35 px-4 py-2 text-end"><strong>{formatCurrency(calculateSubtotals(filteredData[studentName].pastAssessments).debit - calculateSubtotals(filteredData[studentName].pastAssessments).payments - calculateSubtotals(filteredData[studentName].pastAssessments).discount)}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="mt-4 ml-10">
                             <h3 className="text-lg font-medium">Grand Total</h3>
-                            <table className="table-fixed text-sm border border-black/35 mt-2">
+                            <table className="table-fixed text-sm border border-collapse border-black/35 mt-2">
                                 <tbody>
                                     <tr>
                                         <td className="border border-black/35 px-4 py-2"><strong>Total Debit:</strong></td>
@@ -253,11 +286,11 @@ const SoaTable = ({data, isHeadPc, termName}) => {
                             </table>
                         </div>
 
-                        <div className="pagebreak"> </div>
+                        <hr className='h-1 bg-black my-4' />
                 </div>
-
-                
             ))}
+
+
 
             </div>
         </div>

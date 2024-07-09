@@ -20,7 +20,7 @@
 
     .pagebreak { 
         clear: both;
-        page-break-after: always; 
+        page-break-before: always; 
       } 
     table { page-break-inside:auto }
     .breaks {
