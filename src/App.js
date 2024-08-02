@@ -7,6 +7,7 @@ import Soa from "./Soa";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { BsArrowLeft } from "react-icons/bs";
 import Home from "./Pages/Home";
+import CollectionSummary from "./Pages/CollectionSummary";
 function App() {
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [isHeadPc, setIsHeadPc] = useState(false);
@@ -48,6 +49,7 @@ function App() {
               <Route path="/transaction-logs" element={<TransactionLogs isHeadPc={isHeadPc} />} />
          
               <Route path="/docstamp" element={<DocStamp isHeadPc={isHeadPc} />} />
+              <Route path="/collections" element={<CollectionSummary isHeadPc={true} />} />
             {/* Add more routes as needed */}
             <Route path="*" element={
            <Home />
