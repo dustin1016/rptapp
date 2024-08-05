@@ -59,6 +59,12 @@
         bottom: 0;
     }
 
+    .flex-column{
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
     .table-auto {
         table-layout: auto;
     }
@@ -157,5 +163,10 @@
     .text-sm {
         font-size: 12px; /* 14px */
         line-height: 16px; /* 20px */
+    }
+
+    .mx-auto {
+        margin-left: 0px;
+        margin-right: 0px;
     }
    /* } */

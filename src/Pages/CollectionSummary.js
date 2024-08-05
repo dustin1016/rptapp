@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { IoMdPrint } from "react-icons/io";
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
+import { formatCurrency } from './widgets/tableHelpers';
 
 const formatDate = (dateString) => {
     //returns 2024-01-01 as Jan. 1, 2024
@@ -11,8 +12,8 @@ const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const formattedString = new Date(dateString).toLocaleDateString('en-US', options);
     const dateTimeStr = new Date();
-    const formattedTime = new Date(dateTimeStr).toLocaleTimeString('en-US', timeOptions);
-    return formattedString + ' ' + formattedTime;
+    // const formattedTime = new Date(dateTimeStr).toLocaleTimeString('en-US', timeOptions);
+    return formattedString;
   };
 
 
@@ -21,7 +22,10 @@ const CollectionSummary = ({isHeadPc}) => {
     const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [isFetching, setIsFetching]= useState(false);
     const [hasData, setHasData] = useState(false);
-    const [collections, setCollections] = useState([])
+    const [collections, setCollections] = useState([]);
+    const [dues, setDues] = useState([]);
+    const [startOR, setStartOR] = useState('');
+    const [endOR, setEndOR] = useState('');
     const printableRef = useRef(null);
 
     useEffect(()=>{
@@ -36,11 +40,21 @@ const CollectionSummary = ({isHeadPc}) => {
             const result = await response.json();
             setHasData(true)
             console.log(result);
-            // setCollections(result.cashierCollections);
+            setCollections(result.collections);
+            setDues(result.dues);
+            setStartOR(result.beginningOR);
+            setEndOR(result.endingOR);
            
           } catch (error) {
             console.log('Error fetching data: ' + error.message); // Set error message to state
           }
+    }
+
+
+    const calcTotals =(arr)=>{
+
+      const totalCollections = arr.reduce((total, acc) => total + parseFloat(acc.Amount), 0);
+      return totalCollections;
     }
 
 
@@ -51,13 +65,21 @@ const CollectionSummary = ({isHeadPc}) => {
         const printableContent = printableRef.current.innerHTML;
       
         if (printWindow) {
-          printWindow.document.write(`<!DOCTYPE html><html><head><title>PSU ${formatDate(formattedDate)} Transactions Log</title>`);
+          printWindow.document.write(`<!DOCTYPE html><html><head><title>PSU ${formatDate(formattedDate)} Summary of Report of Collections and Deposits</title>`);
           printWindow.document.write('<link rel="stylesheet" href="/print-styles.css" type="text/css" />');
           printWindow.document.write('</head><body>');
           printWindow.document.write(printableContent);
-          printWindow.document.write('<div class="w-full-flex">');
-          printWindow.document.write('<p class="text-xs font-semibold">Prepared By:</p>');
-          printWindow.document.write('<p class="text-xs font-semibold">Approved By:</p>');
+          printWindow.document.write('<div class="w-full-flex mt-6">');
+          printWindow.document.write('<div class="flex-col"');
+          printWindow.document.write('<p class="text-xs mb-6 font-semibold ">Prepared By:</p>');
+          printWindow.document.write('<p class="text-xs"><u>Angelica E. Cordero</u></p>');
+          printWindow.document.write('<p class="text-xs">Cashier Staff</p>');
+          printWindow.document.write('</div>');
+          printWindow.document.write('<div class="flex-col"');
+          printWindow.document.write('<p class="text-xs font-semibold">Certified Correct:</p>');
+          printWindow.document.write('<p class="text-xs"><u>MARICHELLE N. BADON</u></p>');
+          printWindow.document.write('<p class="text-xs">AOV/University Cashier</p>');
+          printWindow.document.write('</div>');
           printWindow.document.write('</div>');
           printWindow.document.write('</body></html>');
           printWindow.document.close();
@@ -112,35 +134,98 @@ const CollectionSummary = ({isHeadPc}) => {
                     </div>
 
                     {/* content area */}
-                    <div className='flex-grow h-screen bg-slate-600 p-3 overflow-y-scroll' >
-                            {/* PRINT BUTTONS */}
-                            {hasData &&
+                    <div className='flex-grow h-screen  p-3 overflow-y-scroll' id='printable' ref={printableRef} >
+                            
+                            {hasData && 
+            <>
+            <div className='mb-6'>
+              <p className='text-sm font-semibold'>Republic of the Philippines</p>
+              <p className='text-sm font-semibold uppercase'>Palawan State University</p>
+              <p className='text-sm font-semibold mb-6'>LBP Fund 164</p>
+              <p className='text-sm font-semibold'>Summary of Report of Collection and Deposits</p>
+              <p className='text-sm font-semibold'>Date: {formatDate(formattedDate)}</p>         
+            </div>
+
+
+
+            <div className="container mx-auto" id="summaryTable">
+              <table className="bg-white border-collapse border border-slate-400 mb-6 text-xs"> 
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="py-2 px-4 text-center text-xs font-semibold border border-black/35 text-gray-500 uppercase tracking-wider">Particulars</th>
+                    <th scope="col" className="py-2 px-4  border border-black/35 text-gray-500 uppercase tracking-wider"></th>
+                    <th scope="col" className="py-2 px-4  border border-black/35 text-gray-500 uppercase tracking-wider"></th>
+                    <th scope="col" className="py-2 px-4 text-center text-xs font-semibold border border-black/35 text-gray-500 uppercase tracking-wider">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {collections.map((c, index) => (
+                    <>
+                  
+                    <tr key={index}>
+                      <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{c.acctName}</td>
+                      <td className='py-2 px-4 border border-black/35'></td>
+                      <td className='py-2 px-4 border border-black/35'></td>
+                      <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{formatCurrency(parseFloat(c.Amount))}</td>
+                    </tr>
+                    {parseInt(c.accountid) === 593 && (
+                      <>
+                        {dues.map((d,i)=>(
+                          <tr key={i}>
+                            <td className='py-2 px-4 border border-black/35'>{d.Payor}</td>
+                            <td className='py-2 px-4 border border-black/35'>OR No. {d.Referenceno}</td>
+                            <td className='py-2 px-4 border border-black/35'>{formatCurrency(parseFloat(d.Amount))}</td>
+                            <td className='py-2 px-4 border border-black/35'></td>
+                          </tr>
+                        ))}
+                      </>
+                    )}
+                    </>
+                  ))}
+                  <tr>
+                    <td className='py-2 px-4 border border-black/35 text-center font-semibold' colSpan={2}>
+                      Total Collections Per O.R. No. {startOR} - {endOR}
+                    </td>
+                    <td className='py-2 px-4 border border-black/35'></td>
+                    <td className='py-2 px-4 border border-black/35 font-semibold'>&#8369; {formatCurrency(calcTotals(collections) + calcTotals(dues))}</td>
+                  </tr>
+                </tbody>
+              </table>          
+            </div>
+            </>
+            
+            }
+
+          
+                    </div>
+                      {/* PRINT BUTTONS */}
+                      {hasData &&
               
               <div className='npr flex flex-col fixed top-5 right-4 h-4'>
                 <button className="bg-blue-500 hover:bg-blue-700 w-24 mb-6 text-center text-white font-semibold py-2 px-4 rounded"
-              onClick={()=>handlePrint()}
-              >
-              <IoMdPrint className='text-6xl' />
-              <p className='text-sm'>PRINT</p>
-              </button>
-            
-             {isHeadPc &&  
-                <DownloadTableExcel
-                    filename={`Daily Transaction Logs - ${formatDate(formattedDate)}`}
-                    sheet="Transactions"
-                    currentTableRef={printableRef.current}
+                onClick={()=>handlePrint()}
                 >
+                  <IoMdPrint className='text-6xl' />
+                  <p className='text-sm'>PRINT</p>
+                </button>
+            
+                {isHeadPc &&  
+                    <DownloadTableExcel
+                        filename={`Daily Transaction Logs - ${formatDate(formattedDate)}`}
+                        sheet="Transactions"
+                        currentTableRef={printableRef.current}
+                    >
 
-                   <button className='bg-green-500 hover:bg-green-700 w-24 text-center text-white font-semibold py-2 px-4 rounded'>
-                   <FaFileExcel className='text-6xl' />
-                   <p className='text-xs'>Export Excel</p></button>
+                      <button className='bg-green-500 hover:bg-green-700 w-24 text-center text-white font-semibold py-2 px-4 rounded'>
+                        <FaFileExcel className='text-6xl' />
+                        <p className='text-xs'>Export Excel</p>
+                      </button>
 
-                </DownloadTableExcel>
-                }
+                    </DownloadTableExcel>
+                    }
 
                 </div>
                 }
-                    </div>
                 </div>
             </div>
         </div>
