@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
-import { IoMdPrint } from "react-icons/io";
+import { IoMdPrint, IoMdReturnLeft } from "react-icons/io";
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
 import { formatCurrency } from './widgets/tableHelpers';
@@ -26,14 +26,67 @@ const CollectionSummary = ({isHeadPc}) => {
     const [dues, setDues] = useState([]);
     const [startOR, setStartOR] = useState('');
     const [endOR, setEndOR] = useState('');
+    const [orFilter, setOrFilter] = useState('date');
+    const [orFrom, setOrFrom] = useState('')
+    const [orTo, setOrTo] = useState('')
+    // const [hasOrError, setHasOrError] = useState(false);
     const printableRef = useRef(null);
 
     useEffect(()=>{
-        // getCollections();
+     
     },[]);
+
+    const checkOr = () =>{
+      const txtOrTo = document.getElementById('orTo');
+      const txtOrFrom = document.getElementById('orFrom');
+      let check = false;
+
+      //check if the length of the characters are same with actual OR numbers
+      if (orFrom.length < 8){
+        txtOrFrom.classList.add('border-red-500')
+        check = true;
+      } else {
+        txtOrFrom.classList.remove('border-red-500')
+      }
+
+      if (orTo.length < 8){
+        txtOrTo.classList.add('border-red-500')
+        check = true;
+      } else {
+        txtOrTo.classList.remove('border-red-500') 
+      }
+
+      //check if the last character of each OR number is a letter
+      const o1 = orFrom.substring(orFrom.length - 1) //beginning OR
+      const o2 = orTo.substring(orTo.length - 1) //ending OR
+
+      if (!isNaN(o1)){
+        txtOrFrom.classList.add('border-red-500')
+        check = true;
+      } else {
+        txtOrFrom.classList.remove('border-red-500')
+      }
+
+      if (!isNaN(o2)){
+        txtOrTo.classList.add('border-red-500')
+        check = true;
+      } else {
+        txtOrTo.classList.remove('border-red-500') 
+      }
+      return check;
+
+
+    }
     const getCollections = async () => {
         try {
-            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/summaryCollections?formattedDate=${formattedDate}`); // Replace with your API endpoint
+          const params = orFilter === 'date' ?
+            `formattedDate=${formattedDate}`
+            :
+            `orFrom=${orFrom}&orTo=${orTo}`;
+            
+            if (checkOr()) return;
+
+            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/summaryCollections?${params}`); // Replace with your API endpoint
             if (!response.ok) {
               throw new Error('Network response was not ok.');
             }
@@ -48,6 +101,20 @@ const CollectionSummary = ({isHeadPc}) => {
           } catch (error) {
             console.log('Error fetching data: ' + error.message); // Set error message to state
           }
+    }
+
+    
+
+    const handleOptionChange = (event) => {
+      setOrFilter(event.target.value);
+    };
+
+    const handleORInput = (event) => {
+      if (event.target.id === 'orFrom'){
+        setOrFrom(event.target.value)
+      } else {
+        setOrTo(event.target.value)
+      }
     }
 
 
@@ -99,7 +166,69 @@ const CollectionSummary = ({isHeadPc}) => {
                 <div className='flex flex-row w-full'>
                     <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
                         <h1 className='text-xl mb-4 npr'>Summary of Collections</h1>
-                        <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
+                        <div>
+                          <h3>Select Filter:</h3>
+                          <div className='flex flex-row gap-6'>
+                          <div>
+                            <input
+                              type="radio"
+                              id="byDate"
+                              name="filterOption"
+                              value="date"
+                              checked={orFilter === 'date'}
+                              onChange={handleOptionChange}
+                              
+                            />
+                            <label htmlFor="byDate">By Date</label>
+                          </div>
+
+                          <div>
+                            <input
+                              type="radio"
+                              id="bySeries"
+                              name="filterOption"
+                              value="series"
+                              checked={orFilter === 'series'}
+                              onChange={handleOptionChange}
+                            />
+                            <label htmlFor="bySeries">By Series</label>
+                          </div>
+                          </div>
+                        
+                        </div>
+
+                        {orFilter === 'date' ? 
+                          <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
+                          :
+                          <div className='flex flex-col gap-2'>
+                            <h1 className='text-xl mb-4'>Indicate OR Series</h1>
+                            <div className='flex flex-row align-middle items-center gap-2'>
+                              <label htmlFor='orFrom' className='text-xs w-20'>Beginning OR:</label>
+                              <input 
+                                type='text'
+                                id='orFrom'
+                                name='orFrom'
+                                className='w-32 border-2 rounded-md px-3 py-2 outline-none text-xs'
+                                value={orFrom}
+                                onChange={handleORInput}
+
+
+                              />
+                            </div>
+                            <div className='flex flex-row align-middle items-center gap-2'>
+                              <label htmlFor='orTo' className='text-xs w-20'>Ending OR:</label>
+                              <input 
+                                type='text'
+                                id='orTo'
+                                name='orTo'
+                                className='w-32 border=2 rounded-md px-3 py-2 outline-none text-xs'
+                                value={orTo}
+                                onChange={handleORInput}
+                              />
+                            </div>
+                          </div>
+                        }
+                        
                         
                         <button className={`bg-transparent
                         hover:bg-blue-500 mt-4 w-full
