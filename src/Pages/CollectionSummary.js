@@ -79,19 +79,22 @@ const CollectionSummary = ({isHeadPc}) => {
     }
     const getCollections = async () => {
         try {
+          setIsFetching(true);
           const params = orFilter === 'date' ?
-            `formattedDate=${formattedDate}`
+            `summaryCollections?formattedDate=${formattedDate}`
             :
-            `orFrom=${orFrom}&orTo=${orTo}`;
+            `summaryCollectionsBySeries?orFrom=${orFrom}&orTo=${orTo}`;
             
             if (checkOr()) return;
 
-            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/summaryCollections?${params}`); // Replace with your API endpoint
+            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/${params}`); // Replace with your API endpoint
             if (!response.ok) {
+              setIsFetching(false);
               throw new Error('Network response was not ok.');
             }
             const result = await response.json();
             setHasData(true)
+            setIsFetching(false);
             console.log(result);
             setCollections(result.collections);
             setDues(result.dues);
@@ -221,7 +224,7 @@ const CollectionSummary = ({isHeadPc}) => {
                                 type='text'
                                 id='orTo'
                                 name='orTo'
-                                className='w-32 border=2 rounded-md px-3 py-2 outline-none text-xs'
+                                className='w-32 border-2 rounded-md px-3 py-2 outline-none text-xs'
                                 value={orTo}
                                 onChange={handleORInput}
                               />
@@ -289,16 +292,16 @@ const CollectionSummary = ({isHeadPc}) => {
                 </thead>
                 <tbody>
                   {collections.map((c, index) => (
-                    <>
+                    <React.Fragment key={index}>
                   
-                    <tr key={index}>
+                    <tr>
                       <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{c.acctName}</td>
                       <td className='py-2 px-4 border border-black/35'></td>
                       <td className='py-2 px-4 border border-black/35'></td>
                       <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{formatCurrency(parseFloat(c.Amount))}</td>
                     </tr>
                     {parseInt(c.accountid) === 593 && (
-                      <>
+                      <React.Fragment key={index}>
                         {dues.map((d,i)=>(
                           <tr key={i}>
                             <td className='py-2 px-4 border border-black/35'>{d.Payor}</td>
@@ -307,9 +310,9 @@ const CollectionSummary = ({isHeadPc}) => {
                             <td className='py-2 px-4 border border-black/35'></td>
                           </tr>
                         ))}
-                      </>
+                      </React.Fragment>
                     )}
-                    </>
+                    </React.Fragment>
                   ))}
                   <tr>
                     <td className='py-2 px-4 border border-black/35 text-center font-semibold' colSpan={2}>
