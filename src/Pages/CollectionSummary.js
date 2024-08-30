@@ -79,14 +79,16 @@ const CollectionSummary = ({isHeadPc}) => {
     }
     const getCollections = async () => {
         try {
-          setIsFetching(true);
+         
           const params = orFilter === 'date' ?
             `summaryCollections?formattedDate=${formattedDate}`
             :
             `summaryCollectionsBySeries?orFrom=${orFrom}&orTo=${orTo}`;
             
-            if (checkOr()) return;
-
+            if (orFilter === 'series'){
+              if (checkOr()) return;
+            }
+            setIsFetching(true);
             const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/${params}`); // Replace with your API endpoint
             if (!response.ok) {
               setIsFetching(false);
