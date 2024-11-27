@@ -25,7 +25,7 @@ function App() {
       const result = await response.json();
   
       const ip = result.ip;
-      if (ip === '10.125.10.106'){
+      if (ip === '10.125.10.106' || ip === '10.125.50.229'){
         setIsHeadPc(true);
       } else {
         setIsHeadPc(false);

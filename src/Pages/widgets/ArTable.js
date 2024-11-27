@@ -237,7 +237,8 @@ const ArTable = ({formattedDate, studentData, isDetailed, isHeadPc}) =>{
                    <FaFileExcel className='text-6xl' />
                    <p className='text-xs'>Export Excel</p></button>
 
-                </DownloadTableExcel>}
+                </DownloadTableExcel>
+                }
           </div>
           
           <div id="printableArea" ref={printableRef}>

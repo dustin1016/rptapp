@@ -37,8 +37,8 @@ const CollectionSummary = ({isHeadPc}) => {
     },[]);
 
     const checkOr = () =>{
-      const txtOrTo = document.getElementById('orTo');
       const txtOrFrom = document.getElementById('orFrom');
+      const txtOrTo = document.getElementById('orTo');
       let check = false;
 
       //check if the length of the characters are same with actual OR numbers
