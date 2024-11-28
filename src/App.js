@@ -18,7 +18,7 @@ function App() {
       //check client IP address
   const netCheck = async () => {
     try {
-      const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/netCheck`); // Replace with your API endpoint
+      const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/netCheck`); // Replace with  API endpoint
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
