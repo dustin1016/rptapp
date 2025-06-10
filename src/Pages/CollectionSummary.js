@@ -29,12 +29,22 @@ const CollectionSummary = ({isHeadPc}) => {
     const [orFilter, setOrFilter] = useState('date');
     const [orFrom, setOrFrom] = useState('')
     const [orTo, setOrTo] = useState('')
-    // const [hasOrError, setHasOrError] = useState(false);
+    const [selectedLayout, setSelectedLayout] = useState(1);
     const printableRef = useRef(null);
 
     useEffect(()=>{
-     
-    },[]);
+      resetData();
+    },[formattedDate, selectedLayout]);
+
+    const resetData = () => {
+      setHasData(false);
+      setCollections([]);
+      setDues([]);
+      setStartOR('');
+      setEndOR('');
+    }
+
+
 
     const checkOr = () =>{
       const txtOrFrom = document.getElementById('orFrom');
@@ -114,6 +124,10 @@ const CollectionSummary = ({isHeadPc}) => {
       setOrFilter(event.target.value);
     };
 
+    const handleLayoutOptionChange = (event) => {
+      setSelectedLayout(parseInt(event.target.value));
+    };
+
     const handleORInput = (event) => {
       if (event.target.id === 'orFrom'){
         setOrFrom(event.target.value)
@@ -130,6 +144,92 @@ const CollectionSummary = ({isHeadPc}) => {
     }
 
 
+    const LayoutSelection = () => {
+      return (
+           
+                        <div className='mb-6'>
+                          <h3>Select Layout:</h3>
+                          <div className='flex flex-row gap-6'>
+                          <div>
+                            <input
+                              type="radio"
+                              id="l1"
+                              name="layoutOption"
+                              value="1"
+                              checked={selectedLayout === 1}
+                              onChange={handleLayoutOptionChange}
+                              
+                            />
+                            <label htmlFor="l1">Basic (Default)</label>
+                          </div>
+
+                          <div>
+                            <input
+                              type="radio"
+                              id="l2"
+                              name="layoutOption"
+                              value="2"
+                              checked={selectedLayout === 2}
+                              onChange={handleLayoutOptionChange}
+                            />
+                            <label htmlFor="l2">Layout 2</label>
+                          </div>
+                          </div>
+                        
+                        </div>
+                      
+      );
+    }
+
+
+    const Layout1 = () => {
+       return (
+          <div className="container mx-auto" id="summaryTable">
+              <table className="bg-white border-collapse border border-slate-400 mb-6 text-xs"> 
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="py-2 px-4 text-center text-xs font-semibold border border-black/35 text-gray-500 uppercase tracking-wider">Particulars</th>
+                    <th scope="col" className="py-2 px-4  border border-black/35 text-gray-500 uppercase tracking-wider"></th>
+                    <th scope="col" className="py-2 px-4  border border-black/35 text-gray-500 uppercase tracking-wider"></th>
+                    <th scope="col" className="py-2 px-4 text-center text-xs font-semibold border border-black/35 text-gray-500 uppercase tracking-wider">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {collections.map((c, index) => (
+                    <React.Fragment key={index}>
+                  
+                    <tr>
+                      <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{c.acctName}</td>
+                      <td className='py-2 px-4 border border-black/35'></td>
+                      <td className='py-2 px-4 border border-black/35'></td>
+                      <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{formatCurrency(parseFloat(c.Amount))}</td>
+                    </tr>
+                    {parseInt(c.accountid) === 593 && (
+                      <React.Fragment key={index}>
+                        {dues.map((d,i)=>(
+                          <tr key={i}>
+                            <td className='py-2 px-4 border border-black/35'>{d.Payor}</td>
+                            <td className='py-2 px-4 border border-black/35'>OR No. {d.Referenceno}</td>
+                            <td className='py-2 px-4 border border-black/35'>{formatCurrency(parseFloat(d.Amount))}</td>
+                            <td className='py-2 px-4 border border-black/35'></td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    )}
+                    </React.Fragment>
+                  ))}
+                  <tr>
+                    <td className='py-2 px-4 border border-black/35 text-center font-semibold' colSpan={2}>
+                      Total Collections Per O.R. No. {startOR} - {endOR}
+                    </td>
+                    <td className='py-2 px-4 border border-black/35'></td>
+                    <td className='py-2 px-4 border border-black/35 font-semibold'>&#8369; {formatCurrency(calcTotals(collections) + calcTotals(dues))}</td>
+                  </tr>
+                </tbody>
+              </table>          
+            </div>
+       )
+    }
 
 
     const handlePrint = () => {
@@ -171,6 +271,8 @@ const CollectionSummary = ({isHeadPc}) => {
                 <div className='flex flex-row w-full'>
                     <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
                         <h1 className='text-xl mb-4 npr'>Summary of Collections</h1>
+
+                        <LayoutSelection />
                         <div>
                           <h3>Select Filter:</h3>
                           <div className='flex flex-row gap-6'>
@@ -233,6 +335,9 @@ const CollectionSummary = ({isHeadPc}) => {
                             </div>
                           </div>
                         }
+
+
+                   
                         
                         
                         <button className={`bg-transparent
@@ -282,50 +387,16 @@ const CollectionSummary = ({isHeadPc}) => {
 
 
 
-            <div className="container mx-auto" id="summaryTable">
-              <table className="bg-white border-collapse border border-slate-400 mb-6 text-xs"> 
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="py-2 px-4 text-center text-xs font-semibold border border-black/35 text-gray-500 uppercase tracking-wider">Particulars</th>
-                    <th scope="col" className="py-2 px-4  border border-black/35 text-gray-500 uppercase tracking-wider"></th>
-                    <th scope="col" className="py-2 px-4  border border-black/35 text-gray-500 uppercase tracking-wider"></th>
-                    <th scope="col" className="py-2 px-4 text-center text-xs font-semibold border border-black/35 text-gray-500 uppercase tracking-wider">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {collections.map((c, index) => (
-                    <React.Fragment key={index}>
+                {selectedLayout === 1 ? (
+                  <Layout1 />
+                ):
+                
+                (
+                  <>
+                  Layout 2
                   
-                    <tr>
-                      <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{c.acctName}</td>
-                      <td className='py-2 px-4 border border-black/35'></td>
-                      <td className='py-2 px-4 border border-black/35'></td>
-                      <td className={`py-2 px-4 border border-black/35 ${parseInt(c.accountid) === 593 && 'font-semibold'}`}>{formatCurrency(parseFloat(c.Amount))}</td>
-                    </tr>
-                    {parseInt(c.accountid) === 593 && (
-                      <React.Fragment key={index}>
-                        {dues.map((d,i)=>(
-                          <tr key={i}>
-                            <td className='py-2 px-4 border border-black/35'>{d.Payor}</td>
-                            <td className='py-2 px-4 border border-black/35'>OR No. {d.Referenceno}</td>
-                            <td className='py-2 px-4 border border-black/35'>{formatCurrency(parseFloat(d.Amount))}</td>
-                            <td className='py-2 px-4 border border-black/35'></td>
-                          </tr>
-                        ))}
-                      </React.Fragment>
-                    )}
-                    </React.Fragment>
-                  ))}
-                  <tr>
-                    <td className='py-2 px-4 border border-black/35 text-center font-semibold' colSpan={2}>
-                      Total Collections Per O.R. No. {startOR} - {endOR}
-                    </td>
-                    <td className='py-2 px-4 border border-black/35'></td>
-                    <td className='py-2 px-4 border border-black/35 font-semibold'>&#8369; {formatCurrency(calcTotals(collections) + calcTotals(dues))}</td>
-                  </tr>
-                </tbody>
-              </table>          
-            </div>
+                  </>
+                )}
             </>
             
             }
