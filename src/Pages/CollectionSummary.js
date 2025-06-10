@@ -1,17 +1,19 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Datepicker from './widgets/DatePicker';
 import { format } from 'date-fns';
-import { IoMdPrint, IoMdReturnLeft } from "react-icons/io";
+import { IoMdPrint } from "react-icons/io";
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
 import { formatCurrency } from './widgets/tableHelpers';
+import DetailedCollectionTable from './widgets/DetailedCollectionTable';
+
 
 const formatDate = (dateString) => {
     //returns 2024-01-01 as Jan. 1, 2024
-    const timeOptions = { timeStyle: 'short', hour12: true};
+    // const timeOptions = { timeStyle: 'short', hour12: true};
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const formattedString = new Date(dateString).toLocaleDateString('en-US', options);
-    const dateTimeStr = new Date();
+    // const dateTimeStr = new Date();
     // const formattedTime = new Date(dateTimeStr).toLocaleTimeString('en-US', timeOptions);
     return formattedString;
   };
@@ -37,11 +39,13 @@ const CollectionSummary = ({isHeadPc}) => {
     },[formattedDate, selectedLayout]);
 
     const resetData = () => {
+      
       setHasData(false);
       setCollections([]);
       setDues([]);
       setStartOR('');
       setEndOR('');
+      
     }
 
 
@@ -88,13 +92,18 @@ const CollectionSummary = ({isHeadPc}) => {
 
     }
     const getCollections = async () => {
+      resetData();
+      //0212348S
+      //0212768S
         try {
          
           const params = orFilter === 'date' ?
-            `summaryCollections?formattedDate=${formattedDate}`
+            `summaryCollections${selectedLayout === 2 ? "2" : ""}?formattedDate=${formattedDate}`
             :
-            `summaryCollectionsBySeries?orFrom=${orFrom}&orTo=${orTo}`;
+            `summaryCollectionsBySeries${selectedLayout === 2 ? "2" : ""}?orFrom=${orFrom}&orTo=${orTo}`;
             
+
+            console.log(params)
             if (orFilter === 'series'){
               if (checkOr()) return;
             }
@@ -105,14 +114,16 @@ const CollectionSummary = ({isHeadPc}) => {
               throw new Error('Network response was not ok.');
             }
             const result = await response.json();
-            setHasData(true)
-            setIsFetching(false);
-            console.log(result);
+            
+     
             setCollections(result.collections);
-            setDues(result.dues);
+            if (result.dues){
+              setDues(result.dues);
+            }
             setStartOR(result.beginningOR);
             setEndOR(result.endingOR);
-           
+            setHasData(true)
+            setIsFetching(false);
           } catch (error) {
             console.log('Error fetching data: ' + error.message); // Set error message to state
           }
@@ -149,7 +160,7 @@ const CollectionSummary = ({isHeadPc}) => {
            
                         <div className='mb-6'>
                           <h3>Select Layout:</h3>
-                          <div className='flex flex-row gap-6'>
+                          <div className='flex flex-row gap-6 text-xs'>
                           <div>
                             <input
                               type="radio"
@@ -275,7 +286,7 @@ const CollectionSummary = ({isHeadPc}) => {
                         <LayoutSelection />
                         <div>
                           <h3>Select Filter:</h3>
-                          <div className='flex flex-row gap-6'>
+                          <div className='flex flex-row gap-6 text-xs mb-6'>
                           <div>
                             <input
                               type="radio"
@@ -387,16 +398,11 @@ const CollectionSummary = ({isHeadPc}) => {
 
 
 
-                {selectedLayout === 1 ? (
+                {selectedLayout === 1 && (
                   <Layout1 />
-                ):
-                
-                (
-                  <>
-                  Layout 2
-                  
-                  </>
                 )}
+
+                {(selectedLayout === 2 && hasData) && <DetailedCollectionTable data={collections} />}
             </>
             
             }

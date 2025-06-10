@@ -11,6 +11,18 @@ export const renderAmountDueAging = (accounts) => {
   };
 
 
+  export const formatToDateNum = (datetimeStr) => {
+    if (!datetimeStr) return '';
+
+      const date = new Date(datetimeStr);
+      if (isNaN(date)) return '';
+
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-based
+  const day = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${month}/${day}/${year}`;
+  }
   export const formatCurrency = (amount) => {
     // Format the amount as a number with two decimal places
     const formattedAmount = amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
