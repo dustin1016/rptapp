@@ -11,8 +11,9 @@ const Sidebar = ({setIsMenuHovered, isHeadPc}) => {
     { path: '/accounts-receivable', item: 'Accounts Receivable', isHeadPc:true, icon: <GiMoneyStack className="w-8 h-8" /> },
     { path: '/soa', item: 'SOA', isHeadPc:true, icon: <BiReceipt className="w-8 h-8" /> },
     { path: '/transaction-logs', item: 'Transaction Logs',isHeadPc:true, icon: <GrTransaction className="w-8 h-8" /> },
-    { path: '/docstamp', item: 'Documentary Stamp Tax',isHeadPc:false, icon: <GiPostStamp className="w-8 h-8" /> },
+    // { path: '/docstamp', item: 'Documentary Stamp Tax',isHeadPc:false, icon: <GiPostStamp className="w-8 h-8" /> },
     { path: '/collections', item: 'Summary of Collections' ,isHeadPc:true, icon: <FaCashRegister className="w-8 h-8" /> },
+    { path: '/rcd', item: 'Report of Collections and Deposits' ,isHeadPc:true, icon: <FaCashRegister className="w-8 h-8" /> },
   ];
   const handleMouseEnter = () => {
     setIsHovered(true);

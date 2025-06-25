@@ -93,8 +93,7 @@ const CollectionSummary = ({isHeadPc}) => {
     }
     const getCollections = async () => {
       resetData();
-      //0212348S
-      //0212768S
+      
         try {
          
           const params = orFilter === 'date' ?
