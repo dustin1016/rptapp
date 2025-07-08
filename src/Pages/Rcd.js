@@ -16,7 +16,8 @@ const Rcd = ({isHeadPc}) => {
     const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [isFetching, setIsFetching]= useState(false);
     const [hasData, setHasData] = useState(false);
-    const [collections, setCollections] = useState([]);
+    const [nonParticulars, setNonParticulars] = useState([]);
+    const [particulars, setParticulars] = useState([]);
     const [startOR, setStartOR] = useState('');
     const [endOR, setEndOR] = useState('');
     const printableRef = useRef(null);
@@ -24,7 +25,8 @@ const Rcd = ({isHeadPc}) => {
     const resetData = () => {
       
       setHasData(false);
-      setCollections([]);
+      setNonParticulars([]);
+      setParticulars([]);
       setStartOR('');
       setEndOR('');
       
@@ -43,9 +45,10 @@ const Rcd = ({isHeadPc}) => {
             }
             const result = await response.json();
             
-            console.log(result.collections)
-            setCollections(result.collections);
-           
+            console.log(result)
+            setNonParticulars(result.nonParticulars);
+            setParticulars(result.nonParticulars);
+            
             setStartOR(result.beginningOR);
             setEndOR(result.endingOR);
             setHasData(true)
@@ -158,7 +161,7 @@ const Rcd = ({isHeadPc}) => {
                                     <p className='text-sm font-semibold'>Date: {formatDate(formattedDate)}</p>         
                                     </div>
 
-
+                                {/* content here */}
 
                                        
                                     </>
