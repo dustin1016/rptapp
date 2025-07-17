@@ -1,8 +1,9 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useRef} from "react";
 import Datepicker from "./widgets/DatePicker";
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
 import { format } from 'date-fns';
+import RcdTable from "./widgets/RcdTable";
 const formatDate = (dateString) => {
     //returns 2024-01-01 as Jan. 1, 2024
     // const timeOptions = { timeStyle: 'short', hour12: true};
@@ -16,19 +17,13 @@ const Rcd = ({isHeadPc}) => {
     const [formattedDate, setFormattedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [isFetching, setIsFetching]= useState(false);
     const [hasData, setHasData] = useState(false);
-    const [nonParticulars, setNonParticulars] = useState([]);
-    const [particulars, setParticulars] = useState([]);
-    const [startOR, setStartOR] = useState('');
-    const [endOR, setEndOR] = useState('');
+    const [data, setData] = useState([]);
     const printableRef = useRef(null);
 
     const resetData = () => {
       
       setHasData(false);
-      setNonParticulars([]);
-      setParticulars([]);
-      setStartOR('');
-      setEndOR('');
+    
       
     }
 
@@ -45,12 +40,8 @@ const Rcd = ({isHeadPc}) => {
             }
             const result = await response.json();
             
-            console.log(result)
-            setNonParticulars(result.nonParticulars);
-            setParticulars(result.nonParticulars);
             
-            setStartOR(result.beginningOR);
-            setEndOR(result.endingOR);
+            setData(result)
             setHasData(true)
             setIsFetching(false);
           } catch (error) {
@@ -60,11 +51,11 @@ const Rcd = ({isHeadPc}) => {
 
 
 
-    const calcTotals =(arr)=>{
+      const calcTotals =(arr)=>{
 
-      const totalCollections = arr.reduce((total, acc) => total + parseFloat(acc.Amount), 0);
-      return totalCollections;
-    }
+        const totalCollections = arr.reduce((total, acc) => total + parseFloat(acc.Amount), 0);
+        return totalCollections;
+      }
 
 
      const handlePrint = () => {
@@ -163,7 +154,7 @@ const Rcd = ({isHeadPc}) => {
 
                                 {/* content here */}
 
-                                       
+                                       <RcdTable data={data} />
                                     </>
                                     
                                     }
@@ -178,7 +169,7 @@ const Rcd = ({isHeadPc}) => {
             
                 {isHeadPc &&  
                     <DownloadTableExcel
-                        filename={`Daily Transaction Logs - ${formatDate(formattedDate)}`}
+                        filename={`RCD (new format) - ${formatDate(formattedDate)}`}
                         sheet="Transactions"
                         currentTableRef={printableRef.current}
                     >
