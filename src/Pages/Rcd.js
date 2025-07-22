@@ -33,9 +33,18 @@ const Rcd = ({isHeadPc}) => {
       resetData();
       
         try {
+
+            const params = orFilter === 'date' ?
+            `rcd?formattedDate=${formattedDate}`
+            :
+            `rcd2?orFrom=${orFrom}&orTo=${orTo}`;
          
             setIsFetching(true);
-            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/rcd?formattedDate=${formattedDate}`); // Replace with your API endpoint
+
+      
+            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/${params}`); // Replace with your API endpoint
+
+       
             if (!response.ok) {
               setIsFetching(false);
               throw new Error('Network response was not ok.');
@@ -177,7 +186,7 @@ const Rcd = ({isHeadPc}) => {
                           </div>
                         }
 
-                         <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
+   
 
 
                    
