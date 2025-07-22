@@ -22,6 +22,7 @@ const RcdTable = ({ data }) => {
             <td className="border px-2 py-1">{classname.toUpperCase()}</td>
             <td className="border px-2 py-1"></td>
             <td className="border px-2 py-1"></td>
+            <td className="border px-2 py-1"></td>
             <td className="border px-2 py-1 text-right">{formatAmount(total)}</td>
           </tr>
           {entries.map((entry, j) => (
@@ -30,6 +31,7 @@ const RcdTable = ({ data }) => {
               <td className="border px-2 py-1"></td>
               <td className="border px-2 py-1"></td>
               <td className="border px-2 py-1 text-right">{formatAmount(entry.amount)}</td>
+              <td className="border px-2 py-1"></td>
             </tr>
           ))}
         </React.Fragment>
@@ -55,6 +57,7 @@ const RcdTable = ({ data }) => {
             <td className="border px-2 py-1"></td>
          
             <td className="border px-2 py-1"></td>
+            <td className="border px-2 py-1"></td>
             <td className="border px-2 py-1 text-right">{formatAmount(classTotal)}</td>
           </tr>
           {Object.entries(groupedByAcct).map(([acctName, acctEntries], j) =>
@@ -64,6 +67,7 @@ const RcdTable = ({ data }) => {
                 <td className="border px-2 py-1">{entry.payor}</td>
                 <td className="border px-2 py-1">{`OR No. ${entry.referenceno}`}</td>
                 <td className="border px-2 py-1 text-right">{formatAmount(entry.amount)}</td>
+                <td className="border px-2 py-1 text-right"></td>
                
               </tr>
             ))
@@ -86,7 +90,7 @@ const calculateGrandTotal = () => {
       <table className="table-auto w-full border-collapse border text-sm">
         <thead>
           <tr className="bg-gray-200 font-semibold">
-            <th className="border px-2 py-1 text-center" colSpan={3}>Particulars</th>
+            <th className="border px-2 py-1 text-center" colSpan={4}>Particulars</th>
             {/* <th className="border px-2 py-1 text-left">Reference No.</th>
             <th className="border px-2 py-1 text-right">Total</th> */}
             <th className="border px-2 py-1 text-right">Amount</th>
@@ -96,7 +100,7 @@ const calculateGrandTotal = () => {
           {renderNonParticulars()}
           {renderParticulars()}
           <tr className="text-black font-bold">
-            <td className="border px-2 py-1 text-left" colSpan={3}>Total Collections Per O.R. No. {data.beginningOR} - {data.endingOR}</td>
+            <td className="border px-2 py-1 text-left" colSpan={4}>Total Collections Per O.R. No. {data.beginningOR} - {data.endingOR}</td>
            
             <td className="border px-2 py-1 text-right">₱ {calculateGrandTotal()}</td>
           </tr>
