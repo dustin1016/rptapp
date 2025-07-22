@@ -19,7 +19,9 @@ const Rcd = ({isHeadPc}) => {
     const [hasData, setHasData] = useState(false);
     const [data, setData] = useState([]);
     const printableRef = useRef(null);
-
+    const [orFilter, setOrFilter] = useState('date');
+    const [orFrom, setOrFrom] = useState('')
+    const [orTo, setOrTo] = useState('')
     const resetData = () => {
       
       setHasData(false);
@@ -90,6 +92,19 @@ const Rcd = ({isHeadPc}) => {
       };
 
 
+        const handleORInput = (event) => {
+          if (event.target.id === 'orFrom'){
+            setOrFrom(event.target.value)
+          } else {
+            setOrTo(event.target.value)
+          }
+        }
+
+    const handleOptionChange = (event) => {
+      setOrFilter(event.target.value);
+    };
+
+
       return (
           <>
         
@@ -99,7 +114,68 @@ const Rcd = ({isHeadPc}) => {
                     <div className='h-screen w-64 p-2 border-r-2 border-r-blue-500 npr'>
                         <h1 className='text-xl mb-4 npr'>Summary of Collections and Deposits</h1>
 
-                       
+                            <div>
+                          <h3>Select Filter:</h3>
+                          <div className='flex flex-row gap-6 text-xs mb-6'>
+                          <div>
+                            <input
+                              type="radio"
+                              id="byDate"
+                              name="filterOption"
+                              value="date"
+                              checked={orFilter === 'date'}
+                              onChange={handleOptionChange}
+                              
+                            />
+                            <label htmlFor="byDate">By Date</label>
+                          </div>
+
+                          <div>
+                            <input
+                              type="radio"
+                              id="bySeries"
+                              name="filterOption"
+                              value="series"
+                              checked={orFilter === 'series'}
+                              onChange={handleOptionChange}
+                            />
+                            <label htmlFor="bySeries">By Series</label>
+                          </div>
+                          </div>
+                        
+                        </div>
+
+                        {orFilter === 'date' ? 
+                          <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
+                          :
+                          <div className='flex flex-col gap-2'>
+                            <h1 className='text-xl mb-4'>Indicate OR Series</h1>
+                            <div className='flex flex-row align-middle items-center gap-2'>
+                              <label htmlFor='orFrom' className='text-xs w-20'>Beginning OR:</label>
+                              <input 
+                                type='text'
+                                id='orFrom'
+                                name='orFrom'
+                                className='w-32 border-2 rounded-md px-3 py-2 outline-none text-xs'
+                                value={orFrom}
+                                onChange={handleORInput}
+
+
+                              />
+                            </div>
+                            <div className='flex flex-row align-middle items-center gap-2'>
+                              <label htmlFor='orTo' className='text-xs w-20'>Ending OR:</label>
+                              <input 
+                                type='text'
+                                id='orTo'
+                                name='orTo'
+                                className='w-32 border-2 rounded-md px-3 py-2 outline-none text-xs'
+                                value={orTo}
+                                onChange={handleORInput}
+                              />
+                            </div>
+                          </div>
+                        }
 
                          <Datepicker setFormattedDate={setFormattedDate} label={'Select Transaction Date'} />
 
