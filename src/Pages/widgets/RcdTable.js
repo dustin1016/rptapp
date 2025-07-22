@@ -28,8 +28,8 @@ const RcdTable = ({ data }) => {
             <tr key={`non-entry-${j}`}>
               <td className="border px-2 py-1 pl-4">{entry.acctName}</td>
               <td className="border px-2 py-1"></td>
-              <td className="border px-2 py-1 text-right">{formatAmount(entry.amount)}</td>
               <td className="border px-2 py-1"></td>
+              <td className="border px-2 py-1 text-right">{formatAmount(entry.amount)}</td>
             </tr>
           ))}
         </React.Fragment>
@@ -53,6 +53,7 @@ const RcdTable = ({ data }) => {
           <tr className="bg-orange-500 text-black font-semibold">
             <td className="border px-2 py-1">{classname.toUpperCase()}</td>
             <td className="border px-2 py-1"></td>
+         
             <td className="border px-2 py-1"></td>
             <td className="border px-2 py-1 text-right">{formatAmount(classTotal)}</td>
           </tr>
@@ -60,9 +61,10 @@ const RcdTable = ({ data }) => {
             acctEntries.map((entry, k) => (
               <tr key={`part-entry-${j}-${k}`}>
                 <td className="border px-2 py-1 pl-4">{acctName}</td>
+                <td className="border px-2 py-1">{entry.payor}</td>
                 <td className="border px-2 py-1">{`OR No. ${entry.referenceno}`}</td>
                 <td className="border px-2 py-1 text-right">{formatAmount(entry.amount)}</td>
-                <td className="border px-2 py-1"></td>
+               
               </tr>
             ))
           )}
