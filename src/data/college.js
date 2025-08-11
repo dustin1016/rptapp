@@ -154,7 +154,19 @@ const colleges = [
     {
       collegeid: 44,
       collegeName: "School of Medicine"
-    }
+    },
+    {
+      collegeid: 46,
+      collegeName: "College of Musical Arts"
+    },
+    {
+      collegeid: 47,
+      collegeName: "ENHANCED K-12 Junior High School"
+    },
+    {
+      collegeid: 48,
+      collegeName: "College of Architecture and Design"
+    },
    ]
 
 export default colleges;
