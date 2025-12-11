@@ -53,7 +53,7 @@ const AccountsReceivable = ({isHeadPc}) => {
         setIsFetching(true);
         setProgressPercentage(0);
         console.time();
-        const eventSource = new EventSource(`http://10.125.2.222:8080/rptapi/index.php/accountsReceivable?formattedDate=${formattedDate}`);
+        const eventSource = new EventSource(`/api/index.php/accountsReceivable?formattedDate=${formattedDate}`);
 
         eventSource.onmessage = (event) => {
           // const strChunk = JSON.stringify(event.data);

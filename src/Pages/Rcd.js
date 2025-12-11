@@ -42,7 +42,7 @@ const Rcd = ({isHeadPc}) => {
             setIsFetching(true);
 
       
-            const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/${params}`); // Replace with your API endpoint
+            const response = await fetch(`/api/index.php/${params}`); // Replace with your API endpoint
 
        
             if (!response.ok) {

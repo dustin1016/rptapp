@@ -52,7 +52,7 @@ const Soa = ({isHeadPc}) => {
         clearData();
         setIsFetching(true);
       
-            const eventSource = new EventSource(`http://10.125.2.222:8080/rptApi/index.php/soa?termid=${termId}`); // Replace with your API endpoint
+            const eventSource = new EventSource(`/api/index.php/soa?termid=${termId}`); // Replace with your API endpoint
             eventSource.onmessage = (event) => {
                 // const strChunk = JSON.stringify(event.data);
                 const newChunk = JSON.parse(event.data);

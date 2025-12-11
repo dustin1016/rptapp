@@ -47,7 +47,7 @@ const DocStamp = ({isHeadPc}) => {
       const getDst = async () => {
         setDstData([]);
         setIsFetching(true);
-        const url = `http://10.125.2.222:8080/rptApi/index.php/dstCn?formattedDate=${formattedDate}`
+        const url = `/api/index.php/dstCn?formattedDate=${formattedDate}`
         try {
           const response = await fetch(url); // Replace with your API endpoint
           if (!response.ok) {

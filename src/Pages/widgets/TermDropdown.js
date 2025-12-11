@@ -11,7 +11,7 @@ const TermDropdown = ({setTermId}) => {
   useEffect(()=>{
     const fetchTermList = async () => {
         try {
-          const response = await fetch(`http://10.125.2.222:8080/rptApi/index.php/termList`); // Replace with your API endpoint
+          const response = await fetch(`/api/index.php/termList`); // Replace with your API endpoint
           if (!response.ok) {
             throw new Error('Network response was not ok.');
           }
