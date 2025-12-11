@@ -24,13 +24,11 @@ function App() {
         throw new Error('Network response was not ok.');
       }
       const result = await response.json();
-  
+      const textresp = await response.text();
+
+      console.log(textresp)
       const ip = result.ip;
-      // if (ip === '10.125.10.106' || ip === '10.125.50.229'){
-      //   setIsHeadPc(true);
-      // } else {
-      //   setIsHeadPc(false);
-      // }
+
     } catch (error) {
       console.log('Error fetching data: ' + error.message); // Set error message to state
     }
