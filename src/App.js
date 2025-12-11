@@ -19,16 +19,16 @@ function App() {
       //check client IP address
   const netCheck = async () => {
     try {
-      const response = await fetch(`/api/netCheck`); // Replace with  API endpoint
+      const response = await fetch(`/api/index.php/netCheck`); // Replace with  API endpoint
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
-      // const result = await response.json();
-      const textresp = await response.text();
+      const result = await response.json();
+      // const textresp = await response.text();
 
-      console.log(textresp)
-      // const ip = result.ip;
-
+      // console.log(textresp)
+      const ip = result.ip;
+      console.log('Client IP Address: ' + ip);
     } catch (error) {
       console.log('Error fetching data: ' + error.message); // Set error message to state
     }
