@@ -24,11 +24,12 @@ function App() {
         throw new Error('Network response was not ok.');
       }
       const result = await response.json();
+      console.log(result);
       // const textresp = await response.text();
 
       // console.log(textresp)
-      const ip = result.ip;
-      console.log('Client IP Address: ' + ip);
+      // const ip = result.ip;
+      // console.log('Client IP Address: ' + ip);
     } catch (error) {
       console.log('Error fetching data: ' + error.message); // Set error message to state
     }
