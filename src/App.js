@@ -19,7 +19,7 @@ function App() {
       //check client IP address
   const netCheck = async () => {
     try {
-      const response = await fetch(`/api/netCheck`); // Replace with  API endpoint
+      const response = await fetch(`https://psu-api.palawan.edu.ph/rt/api/netCheck`); // Replace with  API endpoint
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
