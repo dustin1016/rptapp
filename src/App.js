@@ -19,15 +19,15 @@ function App() {
       //check client IP address
   const netCheck = async () => {
     try {
-      const response = await fetch(`https://psu-api.palawan.edu.ph/rt/api/netCheck`); // Replace with  API endpoint
+      const response = await fetch(`/rt/api/netCheck`); // Replace with  API endpoint
       if (!response.ok) {
         throw new Error('Network response was not ok.');
       }
-      const result = await response.json();
+      // const result = await response.json();
       const textresp = await response.text();
 
       console.log(textresp)
-      const ip = result.ip;
+      // const ip = result.ip;
 
     } catch (error) {
       console.log('Error fetching data: ' + error.message); // Set error message to state
