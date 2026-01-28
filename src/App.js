@@ -19,6 +19,7 @@ function App() {
       //check client IP address
   const netCheck = async () => {
     try {
+ 
       const response = await fetch(`/api/index.php/netCheck`); // Replace with  API endpoint
       if (!response.ok) {
         throw new Error('Network response was not ok.');

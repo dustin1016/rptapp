@@ -4,6 +4,8 @@ import { DownloadTableExcel } from 'react-export-table-to-excel';
 import { FaFileExcel } from "react-icons/fa";
 import { format } from 'date-fns';
 import RcdTable from "./widgets/RcdTable";
+
+
 const formatDate = (dateString) => {
     //returns 2024-01-01 as Jan. 1, 2024
     // const timeOptions = { timeStyle: 'short', hour12: true};
@@ -42,6 +44,7 @@ const Rcd = ({isHeadPc}) => {
             setIsFetching(true);
 
       
+            
             const response = await fetch(`/api/index.php/${params}`); // Replace with your API endpoint
 
        
@@ -238,7 +241,6 @@ const Rcd = ({isHeadPc}) => {
                                     </div>
 
                                 {/* content here */}
-
                                        <RcdTable data={data} />
                                     </>
                                     
